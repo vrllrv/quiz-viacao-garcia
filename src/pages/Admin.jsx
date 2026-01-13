@@ -5,8 +5,13 @@ import QuestionEditor from '../components/QuestionEditor'
 import QuizManager from '../components/QuizManager'
 
 const ITEMS_PER_PAGE = 50
+const ADMIN_PASSWORD = 'garcia2024'
+const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1u2S_Pw-PpIj5sGcoRkdlHNYcMzN6Lxm1iR20mI8LWoM/edit'
 
 export default function Admin() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [passwordInput, setPasswordInput] = useState('')
+  const [passwordError, setPasswordError] = useState('')
   const [activeTab, setActiveTab] = useState('participants')
   const [participants, setParticipants] = useState([])
   const [questions, setQuestions] = useState([])
@@ -31,11 +36,37 @@ export default function Admin() {
     setQuestions(quiz.questions || [])
   }
 
+  // Check if already authenticated
   useEffect(() => {
-    refreshQuizData()
-    fetchStats()
-    fetchDepartments()
+    const stored = sessionStorage.getItem('adminAuth')
+    if (stored === 'true') {
+      setIsAuthenticated(true)
+    }
   }, [])
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      refreshQuizData()
+      fetchStats()
+      fetchDepartments()
+    }
+  }, [isAuthenticated])
+
+  const handleLogin = (e) => {
+    e.preventDefault()
+    if (passwordInput === ADMIN_PASSWORD) {
+      setIsAuthenticated(true)
+      sessionStorage.setItem('adminAuth', 'true')
+      setPasswordError('')
+    } else {
+      setPasswordError('Senha incorreta')
+    }
+  }
+
+  const handleLogout = () => {
+    setIsAuthenticated(false)
+    sessionStorage.removeItem('adminAuth')
+  }
 
   useEffect(() => {
     fetchParticipants()
@@ -157,61 +188,8 @@ export default function Admin() {
     setResetting(false)
   }
 
-  const exportCSV = async () => {
-    if (!supabase) {
-      alert('Supabase não configurado')
-      return
-    }
-
-    try {
-      // Fetch all participants for export (with current filters)
-      let query = supabase
-        .from('participants')
-        .select('*')
-        .order('total_score', { ascending: false })
-
-      if (statusFilter === 'completed') {
-        query = query.eq('completed', true)
-      } else if (statusFilter === 'in_progress') {
-        query = query.eq('completed', false)
-      }
-
-      if (departmentFilter) {
-        query = query.eq('departamento', departmentFilter)
-      }
-
-      const { data, error } = await query
-
-      if (error) throw error
-      if (!data || data.length === 0) {
-        alert('Nenhum participante para exportar')
-        return
-      }
-
-      const headers = ['Posição', 'Nome', 'Matrícula', 'Departamento', 'Pontuação', 'Acertos', 'Status', 'Data']
-      const rows = data.map((p, index) => [
-        index + 1,
-        `"${p.full_name}"`,
-        p.matricula,
-        p.departamento,
-        p.total_score || 0,
-        `${p.correct_count || 0}/${questions.length}`,
-        p.completed ? 'Finalizado' : 'Em andamento',
-        new Date(p.created_at).toLocaleString('pt-BR'),
-      ])
-
-      const csv = [headers, ...rows].map(row => row.join(',')).join('\n')
-      const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `quiz-participants-${new Date().toISOString().split('T')[0]}.csv`
-      a.click()
-      URL.revokeObjectURL(url)
-    } catch (err) {
-      console.error('Error exporting CSV:', err)
-      alert('Erro ao exportar CSV')
-    }
+  const openGoogleSheet = () => {
+    window.open(GOOGLE_SHEET_URL, '_blank')
   }
 
   // Question management
@@ -274,6 +252,41 @@ export default function Admin() {
     setCurrentPage(1)
   }
 
+  // Login screen
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
+          <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Admin</h1>
+          <form onSubmit={handleLogin}>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Senha
+              </label>
+              <input
+                type="password"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                placeholder="Digite a senha"
+                autoFocus
+              />
+            </div>
+            {passwordError && (
+              <p className="text-red-500 text-sm mb-4">{passwordError}</p>
+            )}
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+            >
+              Entrar
+            </button>
+          </form>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
@@ -285,10 +298,13 @@ export default function Admin() {
           </div>
           <div className="flex gap-3">
             <button
-              onClick={exportCSV}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+              onClick={openGoogleSheet}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition flex items-center gap-2"
             >
-              Exportar CSV
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+              Abrir Planilha
             </button>
             <button
               onClick={resetQuiz}
@@ -296,6 +312,12 @@ export default function Admin() {
               className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition disabled:opacity-50"
             >
               {resetting ? 'Resetando...' : 'Resetar Dados'}
+            </button>
+            <button
+              onClick={handleLogout}
+              className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition"
+            >
+              Sair
             </button>
           </div>
         </div>
