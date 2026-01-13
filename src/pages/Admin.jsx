@@ -190,23 +190,36 @@ export default function Admin() {
     }
   }, [currentPage, searchTerm, statusFilter, departmentFilter, quizFilter])
 
-  const resetQuiz = async () => {
-    if (!confirm('Tem certeza que deseja resetar o quiz? Todos os dados serão apagados.')) {
+  const clearParticipants = async () => {
+    if (!confirm('Tem certeza que deseja LIMPAR TODOS OS PARTICIPANTES?\n\nEsta ação irá apagar:\n- Todos os participantes\n- Todas as respostas\n\nEsta ação não pode ser desfeita!')) {
+      return
+    }
+
+    // Double confirmation for production safety
+    if (!confirm('CONFIRMAÇÃO FINAL:\n\nVocê está prestes a apagar ' + stats.total + ' participantes.\n\nDigite OK para confirmar.')) {
       return
     }
 
     setResetting(true)
     if (supabase) {
       try {
-        await supabase.from('answers').delete().neq('id', '00000000-0000-0000-0000-000000000000')
-        await supabase.from('participants').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+        // Delete answers first (foreign key constraint)
+        const { error: answersError } = await supabase.from('answers').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+        if (answersError) throw answersError
+
+        // Then delete participants
+        const { error: participantsError } = await supabase.from('participants').delete().neq('id', '00000000-0000-0000-0000-000000000000')
+        if (participantsError) throw participantsError
+
         setCurrentPage(1)
+        setDepartments([])
+        setQuizNames([])
         await fetchParticipants()
         await fetchStats()
-        alert('Quiz resetado com sucesso!')
+        alert('Dados limpos com sucesso!\n\nLembre-se de limpar a planilha do Google Sheets manualmente.')
       } catch (err) {
-        console.error('Error resetting quiz:', err)
-        alert('Erro ao resetar quiz')
+        console.error('Error clearing participants:', err)
+        alert('Erro ao limpar dados: ' + err.message)
       }
     }
     setResetting(false)
@@ -338,11 +351,14 @@ export default function Admin() {
               Abrir Planilha
             </button>
             <button
-              onClick={resetQuiz}
-              disabled={resetting}
-              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+              onClick={clearParticipants}
+              disabled={resetting || stats.total === 0}
+              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition disabled:opacity-50 flex items-center gap-2"
             >
-              {resetting ? 'Resetando...' : 'Resetar Dados'}
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              {resetting ? 'Limpando...' : 'Limpar Participantes'}
             </button>
             <button
               onClick={handleLogout}
