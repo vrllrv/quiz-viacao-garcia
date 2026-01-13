@@ -37,6 +37,20 @@ export default function Home() {
       const quizName = activeQuiz?.name || QUIZ_CONFIG.title
 
       if (supabase) {
+        // Check if this matricula already participated in this quiz
+        const { data: existing } = await supabase
+          .from('participants')
+          .select('id, full_name')
+          .eq('matricula', formData.matricula)
+          .eq('quiz_name', quizName)
+          .maybeSingle()
+
+        if (existing) {
+          setError(`Matrícula ${formData.matricula} já participou deste quiz.`)
+          setLoading(false)
+          return
+        }
+
         const { data, error: dbError } = await supabase
           .from('participants')
           .insert({
