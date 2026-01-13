@@ -6,6 +6,7 @@ import { QUIZ_CONFIG, getActiveQuiz } from '../data/questions'
 export default function Home() {
   const navigate = useNavigate()
   const [activeQuiz, setActiveQuiz] = useState(null)
+  const [quizLoading, setQuizLoading] = useState(true)
   const [formData, setFormData] = useState({
     fullName: '',
     matricula: '',
@@ -15,7 +16,12 @@ export default function Home() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    setActiveQuiz(getActiveQuiz())
+    const loadQuiz = async () => {
+      const quiz = await getActiveQuiz()
+      setActiveQuiz(quiz)
+      setQuizLoading(false)
+    }
+    loadQuiz()
   }, [])
 
   const handleChange = (e) => {
@@ -95,17 +101,23 @@ export default function Home() {
             </div>
           </div>
 
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">
-            {activeQuiz?.name || QUIZ_CONFIG.title}
-          </h1>
-          {activeQuiz?.description && (
-            <p className="text-gray-500 text-sm mb-2">{activeQuiz.description}</p>
-          )}
-          <p className="text-gray-600">Preencha seus dados para começar</p>
-          {activeQuiz && (
-            <p className="text-xs text-gray-400 mt-2">
-              {activeQuiz.questions?.length || 0} perguntas
-            </p>
+          {quizLoading ? (
+            <p className="text-gray-500">Carregando quiz...</p>
+          ) : (
+            <>
+              <h1 className="text-2xl font-bold text-gray-800 mb-2">
+                {activeQuiz?.name || QUIZ_CONFIG.title}
+              </h1>
+              {activeQuiz?.description && (
+                <p className="text-gray-500 text-sm mb-2">{activeQuiz.description}</p>
+              )}
+              <p className="text-gray-600">Preencha seus dados para começar</p>
+              {activeQuiz && (
+                <p className="text-xs text-gray-400 mt-2">
+                  {activeQuiz.questions?.length || 0} perguntas
+                </p>
+              )}
+            </>
           )}
         </div>
 
@@ -158,10 +170,10 @@ export default function Home() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || quizLoading}
             className="w-full bg-[#5a6e3a] text-white py-4 rounded-lg font-semibold text-lg hover:bg-[#4a5a2a] transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Entrando...' : 'Participar do Quiz'}
+            {loading ? 'Entrando...' : quizLoading ? 'Carregando...' : 'Participar do Quiz'}
           </button>
         </form>
       </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
-import { getQuestions, saveQuestions, DEFAULT_QUESTIONS, getActiveQuiz } from '../data/questions'
+import { saveQuestions, DEFAULT_QUESTIONS, getActiveQuiz } from '../data/questions'
 import QuestionEditor from '../components/QuestionEditor'
 import QuizManager from '../components/QuizManager'
 
@@ -35,10 +35,10 @@ export default function Admin() {
   const [stats, setStats] = useState({ total: 0, completed: 0, avgScore: 0 })
   const [activeUsers, setActiveUsers] = useState(0)
 
-  const refreshQuizData = () => {
-    const quiz = getActiveQuiz()
+  const refreshQuizData = async () => {
+    const quiz = await getActiveQuiz()
     setActiveQuizState(quiz)
-    setQuestions(quiz.questions || [])
+    setQuestions(quiz?.questions || [])
   }
 
   // Check if already authenticated
@@ -293,7 +293,7 @@ export default function Admin() {
     setShowEditor(true)
   }
 
-  const handleSaveQuestion = (question) => {
+  const handleSaveQuestion = async (question) => {
     let newQuestions
     if (editingQuestion) {
       newQuestions = questions.map(q => q.id === question.id ? question : q)
@@ -301,33 +301,33 @@ export default function Admin() {
       newQuestions = [...questions, { ...question, id: Date.now() }]
     }
     setQuestions(newQuestions)
-    saveQuestions(newQuestions)
+    await saveQuestions(newQuestions)
     setShowEditor(false)
     setEditingQuestion(null)
   }
 
-  const handleDeleteQuestion = (questionId) => {
+  const handleDeleteQuestion = async (questionId) => {
     if (!confirm('Tem certeza que deseja excluir esta pergunta?')) return
     const newQuestions = questions.filter(q => q.id !== questionId)
     setQuestions(newQuestions)
-    saveQuestions(newQuestions)
+    await saveQuestions(newQuestions)
     setShowEditor(false)
     setEditingQuestion(null)
   }
 
-  const handleResetQuestions = () => {
+  const handleResetQuestions = async () => {
     if (!confirm('Restaurar perguntas padrão? As perguntas atuais serão perdidas.')) return
     setQuestions(DEFAULT_QUESTIONS)
-    saveQuestions(DEFAULT_QUESTIONS)
+    await saveQuestions(DEFAULT_QUESTIONS)
   }
 
-  const moveQuestion = (index, direction) => {
+  const moveQuestion = async (index, direction) => {
     const newQuestions = [...questions]
     const newIndex = index + direction
     if (newIndex < 0 || newIndex >= questions.length) return
     ;[newQuestions[index], newQuestions[newIndex]] = [newQuestions[newIndex], newQuestions[index]]
     setQuestions(newQuestions)
-    saveQuestions(newQuestions)
+    await saveQuestions(newQuestions)
   }
 
   // Pagination
@@ -476,8 +476,8 @@ export default function Admin() {
         {activeTab === 'quizzes' && (
           <div className="bg-white rounded-xl shadow p-3 sm:p-4 md:p-6">
             <QuizManager
-              onSelectQuiz={(quiz) => {
-                refreshQuizData()
+              onSelectQuiz={async (quiz) => {
+                await refreshQuizData()
                 setActiveTab('questions')
               }}
             />

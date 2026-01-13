@@ -1,3 +1,5 @@
+import { supabase } from '../lib/supabase'
+
 export const QUIZ_CONFIG = {
   title: "Quiz Viação Garcia",
   basePoints: 100,
@@ -71,120 +73,266 @@ const DEFAULT_QUIZ = {
   id: 'default',
   name: 'Quiz Viação Garcia',
   description: 'Quiz sobre a história e valores da Viação Garcia',
-  isActive: true,
-  speedBonus: 50, // Default speed bonus percentage (0-100)
-  showCorrectAnswer: true, // Show correct answer after each question
-  createdAt: new Date().toISOString(),
+  is_active: true,
+  speed_bonus: 50,
+  show_correct_answer: true,
+  created_at: new Date().toISOString(),
   questions: DEFAULT_QUESTIONS,
 }
 
-// Get all quizzes
-export function getQuizzes() {
-  const stored = localStorage.getItem('quizzes')
-  if (stored) {
-    try {
-      return JSON.parse(stored)
-    } catch {
-      return [DEFAULT_QUIZ]
-    }
+// Helper to convert DB format to app format
+function dbToApp(quiz) {
+  if (!quiz) return null
+  return {
+    id: quiz.id,
+    name: quiz.name,
+    description: quiz.description,
+    isActive: quiz.is_active,
+    speedBonus: quiz.speed_bonus,
+    showCorrectAnswer: quiz.show_correct_answer,
+    createdAt: quiz.created_at,
+    questions: quiz.questions || [],
   }
-  return [DEFAULT_QUIZ]
 }
 
-// Save all quizzes
-export function saveQuizzes(quizzes) {
-  localStorage.setItem('quizzes', JSON.stringify(quizzes))
+// Helper to convert app format to DB format
+function appToDb(quiz) {
+  return {
+    id: quiz.id,
+    name: quiz.name,
+    description: quiz.description || '',
+    is_active: quiz.isActive ?? false,
+    speed_bonus: quiz.speedBonus ?? 50,
+    show_correct_answer: quiz.showCorrectAnswer ?? true,
+    questions: quiz.questions || [],
+  }
 }
 
-// Get active quiz
-export function getActiveQuiz() {
-  const quizzes = getQuizzes()
-  return quizzes.find(q => q.isActive) || quizzes[0] || DEFAULT_QUIZ
+// Get all quizzes from Supabase
+export async function getQuizzes() {
+  if (!supabase) return [DEFAULT_QUIZ]
+
+  try {
+    const { data, error } = await supabase
+      .from('quizzes')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+
+    // If no quizzes exist, create the default one
+    if (!data || data.length === 0) {
+      const created = await createQuiz(DEFAULT_QUIZ)
+      return created ? [dbToApp(created)] : [DEFAULT_QUIZ]
+    }
+
+    return data.map(dbToApp)
+  } catch (err) {
+    console.error('Error fetching quizzes:', err)
+    return [DEFAULT_QUIZ]
+  }
+}
+
+// Get active quiz from Supabase
+export async function getActiveQuiz() {
+  if (!supabase) return DEFAULT_QUIZ
+
+  try {
+    const { data, error } = await supabase
+      .from('quizzes')
+      .select('*')
+      .eq('is_active', true)
+      .maybeSingle()
+
+    if (error) throw error
+
+    if (data) {
+      return dbToApp(data)
+    }
+
+    // No active quiz - get first quiz or create default
+    const { data: firstQuiz } = await supabase
+      .from('quizzes')
+      .select('*')
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .maybeSingle()
+
+    if (firstQuiz) {
+      // Set it as active
+      await setActiveQuiz(firstQuiz.id)
+      return dbToApp({ ...firstQuiz, is_active: true })
+    }
+
+    // No quizzes at all - create default
+    const created = await createQuiz({ ...DEFAULT_QUIZ, isActive: true })
+    return created ? dbToApp(created) : DEFAULT_QUIZ
+  } catch (err) {
+    console.error('Error fetching active quiz:', err)
+    return DEFAULT_QUIZ
+  }
 }
 
 // Set active quiz by ID
-export function setActiveQuiz(quizId) {
-  const quizzes = getQuizzes()
-  const updated = quizzes.map(q => ({
-    ...q,
-    isActive: q.id === quizId,
-  }))
-  saveQuizzes(updated)
+export async function setActiveQuiz(quizId) {
+  if (!supabase) return false
+
+  try {
+    // First, deactivate all quizzes
+    await supabase
+      .from('quizzes')
+      .update({ is_active: false })
+      .neq('id', 'placeholder')
+
+    // Then activate the selected one
+    const { error } = await supabase
+      .from('quizzes')
+      .update({ is_active: true })
+      .eq('id', quizId)
+
+    if (error) throw error
+    return true
+  } catch (err) {
+    console.error('Error setting active quiz:', err)
+    return false
+  }
 }
 
 // Get quiz by ID
-export function getQuizById(quizId) {
-  const quizzes = getQuizzes()
-  return quizzes.find(q => q.id === quizId)
+export async function getQuizById(quizId) {
+  if (!supabase) return null
+
+  try {
+    const { data, error } = await supabase
+      .from('quizzes')
+      .select('*')
+      .eq('id', quizId)
+      .maybeSingle()
+
+    if (error) throw error
+    return dbToApp(data)
+  } catch (err) {
+    console.error('Error fetching quiz:', err)
+    return null
+  }
 }
 
 // Create a new quiz
-export function createQuiz(quiz) {
-  const quizzes = getQuizzes()
-  const newQuiz = {
-    ...quiz,
-    id: quiz.id || `quiz-${Date.now()}`,
-    createdAt: new Date().toISOString(),
-    questions: quiz.questions || [],
-    isActive: false,
+export async function createQuiz(quiz) {
+  if (!supabase) return null
+
+  try {
+    const newQuiz = {
+      ...appToDb(quiz),
+      id: quiz.id || `quiz-${Date.now()}`,
+      is_active: quiz.isActive ?? false,
+    }
+
+    const { data, error } = await supabase
+      .from('quizzes')
+      .insert(newQuiz)
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  } catch (err) {
+    console.error('Error creating quiz:', err)
+    return null
   }
-  quizzes.push(newQuiz)
-  saveQuizzes(quizzes)
-  return newQuiz
 }
 
 // Update a quiz
-export function updateQuiz(quizId, updates) {
-  const quizzes = getQuizzes()
-  const index = quizzes.findIndex(q => q.id === quizId)
-  if (index !== -1) {
-    quizzes[index] = { ...quizzes[index], ...updates }
-    saveQuizzes(quizzes)
-    return quizzes[index]
+export async function updateQuiz(quizId, updates) {
+  if (!supabase) return null
+
+  try {
+    const dbUpdates = {}
+    if (updates.name !== undefined) dbUpdates.name = updates.name
+    if (updates.description !== undefined) dbUpdates.description = updates.description
+    if (updates.isActive !== undefined) dbUpdates.is_active = updates.isActive
+    if (updates.speedBonus !== undefined) dbUpdates.speed_bonus = updates.speedBonus
+    if (updates.showCorrectAnswer !== undefined) dbUpdates.show_correct_answer = updates.showCorrectAnswer
+    if (updates.questions !== undefined) dbUpdates.questions = updates.questions
+
+    const { data, error } = await supabase
+      .from('quizzes')
+      .update(dbUpdates)
+      .eq('id', quizId)
+      .select()
+      .single()
+
+    if (error) throw error
+    return dbToApp(data)
+  } catch (err) {
+    console.error('Error updating quiz:', err)
+    return null
   }
-  return null
 }
 
 // Delete a quiz
-export function deleteQuiz(quizId) {
-  const quizzes = getQuizzes()
-  const filtered = quizzes.filter(q => q.id !== quizId)
-  // Ensure at least one quiz remains active
-  if (filtered.length > 0 && !filtered.some(q => q.isActive)) {
-    filtered[0].isActive = true
+export async function deleteQuiz(quizId) {
+  if (!supabase) return []
+
+  try {
+    const { error } = await supabase
+      .from('quizzes')
+      .delete()
+      .eq('id', quizId)
+
+    if (error) throw error
+
+    // Get remaining quizzes
+    const remaining = await getQuizzes()
+
+    // If no quizzes remain or none are active, activate the first one
+    if (remaining.length > 0 && !remaining.some(q => q.isActive)) {
+      await setActiveQuiz(remaining[0].id)
+      remaining[0].isActive = true
+    }
+
+    return remaining
+  } catch (err) {
+    console.error('Error deleting quiz:', err)
+    return []
   }
-  saveQuizzes(filtered)
-  return filtered
 }
 
 // Duplicate a quiz
-export function duplicateQuiz(quizId) {
-  const quiz = getQuizById(quizId)
-  if (!quiz) return null
+export async function duplicateQuiz(quizId) {
+  if (!supabase) return null
 
-  const newQuiz = {
-    ...quiz,
-    id: `quiz-${Date.now()}`,
-    name: `${quiz.name} (Cópia)`,
-    isActive: false,
-    createdAt: new Date().toISOString(),
-    questions: quiz.questions.map(q => ({ ...q, id: Date.now() + Math.random() })),
+  try {
+    const quiz = await getQuizById(quizId)
+    if (!quiz) return null
+
+    const newQuiz = {
+      id: `quiz-${Date.now()}`,
+      name: `${quiz.name} (Cópia)`,
+      description: quiz.description,
+      isActive: false,
+      speedBonus: quiz.speedBonus,
+      showCorrectAnswer: quiz.showCorrectAnswer,
+      questions: quiz.questions.map(q => ({ ...q, id: Date.now() + Math.random() })),
+    }
+
+    return await createQuiz(newQuiz)
+  } catch (err) {
+    console.error('Error duplicating quiz:', err)
+    return null
   }
-
-  const quizzes = getQuizzes()
-  quizzes.push(newQuiz)
-  saveQuizzes(quizzes)
-  return newQuiz
 }
 
-// Legacy support - get questions from active quiz
-export function getQuestions() {
-  const activeQuiz = getActiveQuiz()
-  return activeQuiz.questions || DEFAULT_QUESTIONS
+// Legacy support - get questions from active quiz (async)
+export async function getQuestions() {
+  const activeQuiz = await getActiveQuiz()
+  return activeQuiz?.questions || DEFAULT_QUESTIONS
 }
 
-// Legacy support - save questions to active quiz
-export function saveQuestions(questions) {
-  const activeQuiz = getActiveQuiz()
-  updateQuiz(activeQuiz.id, { questions })
+// Legacy support - save questions to active quiz (async)
+export async function saveQuestions(questions) {
+  const activeQuiz = await getActiveQuiz()
+  if (activeQuiz) {
+    await updateQuiz(activeQuiz.id, { questions })
+  }
 }

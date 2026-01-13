@@ -38,22 +38,25 @@ export default function Quiz() {
   const { timeLeft, start, stop, reset } = useTimer(timeLimit, handleTimeout)
 
   useEffect(() => {
-    const participantId = localStorage.getItem('participantId')
-    if (!participantId) {
-      navigate('/')
-      return
-    }
+    const loadQuiz = async () => {
+      const participantId = localStorage.getItem('participantId')
+      if (!participantId) {
+        navigate('/')
+        return
+      }
 
-    const activeQuiz = getActiveQuiz()
-    if (!activeQuiz || !activeQuiz.questions || activeQuiz.questions.length === 0) {
-      alert('Nenhuma pergunta configurada!')
-      navigate('/')
-      return
-    }
+      const activeQuiz = await getActiveQuiz()
+      if (!activeQuiz || !activeQuiz.questions || activeQuiz.questions.length === 0) {
+        alert('Nenhuma pergunta configurada!')
+        navigate('/')
+        return
+      }
 
-    setQuiz(activeQuiz)
-    setQuestions(activeQuiz.questions)
-    setIsReady(true)
+      setQuiz(activeQuiz)
+      setQuestions(activeQuiz.questions)
+      setIsReady(true)
+    }
+    loadQuiz()
   }, [navigate])
 
   useEffect(() => {

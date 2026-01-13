@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   getQuizzes,
   createQuiz,
@@ -9,12 +9,20 @@ import {
 } from '../data/questions'
 
 export default function QuizManager({ onSelectQuiz }) {
-  const [quizzes, setQuizzes] = useState(getQuizzes())
+  const [quizzes, setQuizzes] = useState([])
+  const [loading, setLoading] = useState(true)
   const [editingQuiz, setEditingQuiz] = useState(null)
   const [showForm, setShowForm] = useState(false)
 
-  const refreshQuizzes = () => {
-    setQuizzes(getQuizzes())
+  useEffect(() => {
+    refreshQuizzes()
+  }, [])
+
+  const refreshQuizzes = async () => {
+    setLoading(true)
+    const data = await getQuizzes()
+    setQuizzes(data)
+    setLoading(false)
   }
 
   const handleCreate = () => {
@@ -27,45 +35,53 @@ export default function QuizManager({ onSelectQuiz }) {
     setShowForm(true)
   }
 
-  const handleSave = (formData) => {
+  const handleSave = async (formData) => {
     if (editingQuiz) {
-      updateQuiz(editingQuiz.id, formData)
+      await updateQuiz(editingQuiz.id, formData)
     } else {
-      createQuiz(formData)
+      await createQuiz(formData)
     }
-    refreshQuizzes()
+    await refreshQuizzes()
     setShowForm(false)
     setEditingQuiz(null)
   }
 
-  const handleDelete = (quizId) => {
+  const handleDelete = async (quizId) => {
     if (quizzes.length <= 1) {
       alert('Você precisa manter pelo menos um quiz.')
       return
     }
     if (confirm('Tem certeza que deseja excluir este quiz?')) {
-      deleteQuiz(quizId)
-      refreshQuizzes()
+      await deleteQuiz(quizId)
+      await refreshQuizzes()
     }
   }
 
-  const handleDuplicate = (quizId) => {
-    duplicateQuiz(quizId)
-    refreshQuizzes()
+  const handleDuplicate = async (quizId) => {
+    await duplicateQuiz(quizId)
+    await refreshQuizzes()
   }
 
-  const handleSetActive = (quizId) => {
-    setActiveQuiz(quizId)
-    refreshQuizzes()
+  const handleSetActive = async (quizId) => {
+    await setActiveQuiz(quizId)
+    await refreshQuizzes()
   }
 
-  const handleManageQuestions = (quiz) => {
+  const handleManageQuestions = async (quiz) => {
     // First set this quiz as active so questions tab edits it
-    setActiveQuiz(quiz.id)
-    refreshQuizzes()
+    await setActiveQuiz(quiz.id)
+    await refreshQuizzes()
     if (onSelectQuiz) {
       onSelectQuiz(quiz)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="text-center py-12 text-gray-500">
+        Carregando quizzes...
+      </div>
+    )
   }
 
   return (
@@ -193,8 +209,9 @@ function QuizForm({ quiz, onSave, onCancel }) {
     showCorrectAnswer: quiz?.showCorrectAnswer ?? true,
   })
   const [errors, setErrors] = useState({})
+  const [saving, setSaving] = useState(false)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const newErrors = {}
 
@@ -207,7 +224,9 @@ function QuizForm({ quiz, onSave, onCancel }) {
       return
     }
 
-    onSave(form)
+    setSaving(true)
+    await onSave(form)
+    setSaving(false)
   }
 
   return (
@@ -306,15 +325,17 @@ function QuizForm({ quiz, onSave, onCancel }) {
             <button
               type="button"
               onClick={onCancel}
-              className="w-full sm:w-auto px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+              disabled={saving}
+              className="w-full sm:w-auto px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition disabled:opacity-50"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="w-full sm:w-auto px-6 py-2 bg-[#5a6e3a] text-white rounded-lg hover:bg-[#4a5a2a] transition"
+              disabled={saving}
+              className="w-full sm:w-auto px-6 py-2 bg-[#5a6e3a] text-white rounded-lg hover:bg-[#4a5a2a] transition disabled:opacity-50"
             >
-              Salvar
+              {saving ? 'Salvando...' : 'Salvar'}
             </button>
           </div>
         </form>
