@@ -2,9 +2,9 @@ export default function AnswerButton({ option, selected, correct, showResult, sh
   const getButtonStyle = () => {
     if (!showResult) {
       if (selected) {
-        return 'bg-blue-600 border-blue-400 text-white'
+        return 'bg-[#5a6e3a] border-[#4a5a2a] text-white'
       }
-      return 'bg-gray-800 border-gray-600 text-white hover:bg-gray-700 hover:border-gray-500'
+      return 'bg-gray-800 border-gray-600 text-white hover:bg-gray-700 hover:border-[#5a6e3a]'
     }
 
     // Show result state

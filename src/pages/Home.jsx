@@ -71,10 +71,17 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+          {/* Logo */}
+          <div className="flex justify-center mb-6">
+            <div className="bg-[#333] rounded-xl p-4">
+              <img src="/logo_garcia.svg" alt="Viação Garcia" className="h-10" />
+            </div>
+          </div>
+
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">
             {activeQuiz?.name || QUIZ_CONFIG.title}
           </h1>
           {activeQuiz?.description && (
@@ -98,7 +105,7 @@ export default function Home() {
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-gray-900"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent transition text-gray-900"
               placeholder="Seu nome completo"
             />
           </div>
@@ -112,7 +119,7 @@ export default function Home() {
               name="matricula"
               value={formData.matricula}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-gray-900"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent transition text-gray-900"
               placeholder="Sua matrícula"
             />
           </div>
@@ -126,7 +133,7 @@ export default function Home() {
               name="departamento"
               value={formData.departamento}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-gray-900"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent transition text-gray-900"
               placeholder="Seu departamento"
             />
           </div>
@@ -138,7 +145,7 @@ export default function Home() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-[#5a6e3a] text-white py-4 rounded-lg font-semibold text-lg hover:bg-[#4a5a2a] transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Entrando...' : 'Participar do Quiz'}
           </button>

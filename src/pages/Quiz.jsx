@@ -178,9 +178,15 @@ export default function Quiz() {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex flex-col p-4">
       {/* Header */}
       <div className="max-w-2xl w-full mx-auto mb-6">
+        {/* Logo */}
+        <div className="flex justify-center mb-4">
+          <div className="bg-[#333] rounded-lg px-4 py-2">
+            <img src="/logo_garcia.svg" alt="Viação Garcia" className="h-6" />
+          </div>
+        </div>
         <div className="flex justify-between items-center text-gray-400 mb-4">
           <span>Pergunta {currentIndex + 1} de {questions.length}</span>
-          <span className="font-bold text-white">{totalScore} pts</span>
+          <span className="font-bold text-[#5a6e3a]">{totalScore} pts</span>
         </div>
         <Timer timeLeft={timeLeft} totalTime={timeLimit} />
       </div>

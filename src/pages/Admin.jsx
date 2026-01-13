@@ -280,8 +280,14 @@ export default function Admin() {
   // Login screen
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
+          {/* Logo */}
+          <div className="flex justify-center mb-6">
+            <div className="bg-[#333] rounded-xl p-4">
+              <img src="/logo_garcia.svg" alt="Viação Garcia" className="h-8" />
+            </div>
+          </div>
           <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Admin</h1>
           <form onSubmit={handleLogin}>
             <div className="mb-4">
@@ -292,7 +298,7 @@ export default function Admin() {
                 type="password"
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent text-gray-900"
                 placeholder="Digite a senha"
                 autoFocus
               />
@@ -302,7 +308,7 @@ export default function Admin() {
             )}
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+              className="w-full bg-[#5a6e3a] text-white py-3 rounded-lg font-semibold hover:bg-[#4a5a2a] transition"
             >
               Entrar
             </button>
@@ -324,7 +330,7 @@ export default function Admin() {
           <div className="flex gap-3">
             <button
               onClick={openGoogleSheet}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition flex items-center gap-2"
+              className="bg-[#5a6e3a] text-white px-4 py-2 rounded-lg hover:bg-[#4a5a2a] transition flex items-center gap-2"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -353,7 +359,7 @@ export default function Admin() {
             onClick={() => setActiveTab('participants')}
             className={`px-4 py-2 rounded-lg font-medium transition ${
               activeTab === 'participants'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-[#5a6e3a] text-white'
                 : 'bg-white text-gray-600 hover:bg-gray-50'
             }`}
           >
@@ -363,7 +369,7 @@ export default function Admin() {
             onClick={() => setActiveTab('quizzes')}
             className={`px-4 py-2 rounded-lg font-medium transition ${
               activeTab === 'quizzes'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-[#5a6e3a] text-white'
                 : 'bg-white text-gray-600 hover:bg-gray-50'
             }`}
           >
@@ -373,7 +379,7 @@ export default function Admin() {
             onClick={() => setActiveTab('questions')}
             className={`px-4 py-2 rounded-lg font-medium transition ${
               activeTab === 'questions'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-[#5a6e3a] text-white'
                 : 'bg-white text-gray-600 hover:bg-gray-50'
             }`}
           >
@@ -383,14 +389,14 @@ export default function Admin() {
 
         {/* Active Quiz indicator */}
         {activeQuiz && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6 flex items-center justify-between">
+          <div className="bg-[#5a6e3a]/10 border border-[#5a6e3a]/30 rounded-lg p-3 mb-6 flex items-center justify-between">
             <div>
-              <span className="text-sm text-blue-600">Quiz ativo:</span>
-              <span className="ml-2 font-medium text-blue-800">{activeQuiz.name}</span>
+              <span className="text-sm text-[#5a6e3a]">Quiz ativo:</span>
+              <span className="ml-2 font-medium text-[#4a5a2a]">{activeQuiz.name}</span>
             </div>
             <button
               onClick={() => setActiveTab('quizzes')}
-              className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+              className="text-sm text-[#5a6e3a] hover:text-[#4a5a2a] hover:underline"
             >
               Alterar
             </button>
@@ -413,7 +419,7 @@ export default function Admin() {
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="bg-white p-6 rounded-xl shadow">
-                <p className="text-3xl font-bold text-blue-600">{stats.total}</p>
+                <p className="text-3xl font-bold text-[#5a6e3a]">{stats.total}</p>
                 <p className="text-gray-600">Total Participantes</p>
               </div>
               <div className="bg-white p-6 rounded-xl shadow">
@@ -439,7 +445,7 @@ export default function Admin() {
                       setSearchTerm(e.target.value)
                       setCurrentPage(1)
                     }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent text-gray-900"
                   />
                 </div>
 
@@ -451,7 +457,7 @@ export default function Admin() {
                       setStatusFilter(e.target.value)
                       setCurrentPage(1)
                     }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent text-gray-900"
                   >
                     <option value="">Todos status</option>
                     <option value="completed">Finalizados</option>
@@ -467,7 +473,7 @@ export default function Admin() {
                       setDepartmentFilter(e.target.value)
                       setCurrentPage(1)
                     }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent text-gray-900"
                   >
                     <option value="">Todos departamentos</option>
                     {departments.map(dept => (
@@ -484,7 +490,7 @@ export default function Admin() {
                       setQuizFilter(e.target.value)
                       setCurrentPage(1)
                     }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent text-gray-900"
                   >
                     <option value="">Todos quizzes</option>
                     {quizNames.map(quiz => (
@@ -565,7 +571,7 @@ export default function Admin() {
                             {p.departamento}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="font-bold text-blue-600">{p.total_score || 0}</span>
+                            <span className="font-bold text-[#5a6e3a]">{p.total_score || 0}</span>
                             <span className="text-gray-400 text-sm ml-1">
                               ({p.correct_count || 0}/{questions.length})
                             </span>
@@ -662,7 +668,7 @@ export default function Admin() {
                 </button>
                 <button
                   onClick={handleAddQuestion}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                  className="bg-[#5a6e3a] text-white px-4 py-2 rounded-lg hover:bg-[#4a5a2a] transition"
                 >
                   + Nova Pergunta
                 </button>
@@ -739,7 +745,7 @@ export default function Admin() {
                         )}
                         <button
                           onClick={() => handleEditQuestion(question)}
-                          className="text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-50 transition"
+                          className="text-[#5a6e3a] hover:text-[#4a5a2a] p-2 rounded-lg hover:bg-[#5a6e3a]/10 transition"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />

@@ -66,11 +66,18 @@ export default function Result() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
       <div className="bg-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-md text-center">
+        {/* Logo */}
+        <div className="flex justify-center mb-6">
+          <div className="bg-[#333] rounded-lg px-4 py-2">
+            <img src="/logo_garcia.svg" alt="Viação Garcia" className="h-6" />
+          </div>
+        </div>
+
         <h1 className="text-3xl font-bold text-white mb-2">Quiz Finalizado!</h1>
 
         <div className="my-8">
           <p className="text-gray-400 mb-2">Sua pontuação</p>
-          <p className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
+          <p className="text-6xl font-bold text-[#5a6e3a]">
             {results.totalScore}
           </p>
           <p className="text-gray-400 mt-2">pontos</p>
@@ -98,9 +105,9 @@ export default function Result() {
 
         <Link
           to="/leaderboard"
-          className="block w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition"
+          className="block w-full bg-[#5a6e3a] text-white py-4 rounded-lg font-semibold text-lg hover:bg-[#4a5a2a] transition"
         >
-          Ver Leaderboard
+          Ver Ranking
         </Link>
 
         <p className="text-gray-500 mt-6 text-sm">

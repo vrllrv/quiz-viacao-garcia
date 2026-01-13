@@ -133,7 +133,7 @@ export default function Leaderboard() {
   const getPositionStyle = (index) => {
     if (index === 0) return 'bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border-yellow-500'
     if (index === 1) return 'bg-gradient-to-r from-gray-400/20 to-gray-500/20 border-gray-400'
-    if (index === 2) return 'bg-gradient-to-r from-orange-600/20 to-orange-700/20 border-orange-600'
+    if (index === 2) return 'bg-gradient-to-r from-[#5a6e3a]/20 to-[#4a5a2a]/20 border-[#5a6e3a]'
     return 'bg-gray-800/50 border-gray-700'
   }
 
@@ -149,10 +149,16 @@ export default function Leaderboard() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-6">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
-            🏆 Leaderboard
+          {/* Logo */}
+          <div className="flex justify-center mb-4">
+            <div className="bg-[#333] rounded-lg px-4 py-2">
+              <img src="/logo_garcia.svg" alt="Viação Garcia" className="h-8" />
+            </div>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+            Ranking
           </h1>
-          <p className="text-xl text-gray-400">{QUIZ_CONFIG.title}</p>
+          <p className="text-lg text-gray-400">{QUIZ_CONFIG.title}</p>
         </div>
 
         {/* Filters */}
@@ -165,7 +171,7 @@ export default function Leaderboard() {
                 placeholder="Buscar por nome..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent"
               />
             </div>
 
@@ -174,7 +180,7 @@ export default function Leaderboard() {
               <select
                 value={departmentFilter}
                 onChange={(e) => setDepartmentFilter(e.target.value)}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent"
               >
                 <option value="">Todos departamentos</option>
                 {departments.map(dept => (
@@ -188,7 +194,7 @@ export default function Leaderboard() {
               <select
                 value={limit}
                 onChange={(e) => setLimit(Number(e.target.value))}
-                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent"
               >
                 {LIMIT_OPTIONS.map(opt => (
                   <option key={opt} value={opt}>Top {opt}</option>
@@ -247,7 +253,7 @@ export default function Leaderboard() {
                     <p className={`text-xl md:text-2xl font-bold ${
                       index === 0 ? 'text-yellow-400' :
                       index === 1 ? 'text-gray-300' :
-                      index === 2 ? 'text-orange-400' :
+                      index === 2 ? 'text-[#6b8043]' :
                       'text-gray-400'
                     }`}>
                       {participant.total_score}
