@@ -293,7 +293,7 @@ export default function Admin() {
   // Login screen
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
+      <div className="min-h-screen min-h-dvh bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
           {/* Logo */}
           <div className="flex justify-center mb-6">
@@ -332,7 +332,7 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-2 sm:p-4 md:p-8">
+    <div className="min-h-screen min-h-dvh bg-gray-100 p-2 sm:p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex flex-col gap-4 mb-6 md:mb-8">

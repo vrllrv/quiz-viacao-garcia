@@ -175,7 +175,7 @@ export default function Quiz() {
   const lastAnswer = answers[answers.length - 1]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex flex-col p-4">
+    <div className="min-h-screen min-h-dvh bg-gradient-to-br from-gray-900 to-gray-800 flex flex-col p-4">
       {/* Header */}
       <div className="max-w-2xl w-full mx-auto mb-6">
         {/* Logo */}
