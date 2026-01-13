@@ -64,53 +64,53 @@ export default function Result() {
   }
 
   return (
-    <div className="min-h-screen min-h-dvh bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
-      <div className="bg-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-md text-center">
+    <div className="min-h-screen min-h-dvh bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-3 sm:p-4">
+      <div className="bg-gray-800 rounded-2xl shadow-2xl p-5 sm:p-8 w-full max-w-md text-center">
         {/* Logo */}
-        <div className="flex justify-center mb-6">
-          <div className="bg-[#333] rounded-lg px-4 py-2">
-            <img src="/logo_garcia.svg" alt="Viação Garcia" className="h-6" />
+        <div className="flex justify-center mb-4 sm:mb-6">
+          <div className="bg-[#333] rounded-lg px-3 py-1.5 sm:px-4 sm:py-2">
+            <img src="/logo_garcia.svg" alt="Viação Garcia" className="h-5 sm:h-6" />
           </div>
         </div>
 
-        <h1 className="text-3xl font-bold text-white mb-2">Quiz Finalizado!</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">Quiz Finalizado!</h1>
 
-        <div className="my-8">
-          <p className="text-gray-400 mb-2">Sua pontuação</p>
-          <p className="text-6xl font-bold text-[#5a6e3a]">
+        <div className="my-5 sm:my-8">
+          <p className="text-gray-400 text-sm sm:text-base mb-1 sm:mb-2">Sua pontuação</p>
+          <p className="text-5xl sm:text-6xl font-bold text-[#5a6e3a]">
             {results.totalScore}
           </p>
-          <p className="text-gray-400 mt-2">pontos</p>
+          <p className="text-gray-400 text-sm sm:text-base mt-1 sm:mt-2">pontos</p>
         </div>
 
         {!loading && position && (
-          <div className="mb-8 p-4 bg-gray-700/50 rounded-xl">
-            <p className="text-gray-400 mb-1">Você ficou em</p>
-            <p className="text-4xl font-bold text-white">
+          <div className="mb-5 sm:mb-8 p-3 sm:p-4 bg-gray-700/50 rounded-xl">
+            <p className="text-gray-400 text-sm mb-0.5 sm:mb-1">Você ficou em</p>
+            <p className="text-3xl sm:text-4xl font-bold text-white">
               {getPositionEmoji(position)} {position}º lugar
             </p>
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="bg-gray-700/50 p-4 rounded-xl">
-            <p className="text-2xl font-bold text-green-400">{results.correctCount}/{results.totalQuestions}</p>
-            <p className="text-sm text-gray-400">Acertos</p>
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-5 sm:mb-8">
+          <div className="bg-gray-700/50 p-3 sm:p-4 rounded-xl">
+            <p className="text-xl sm:text-2xl font-bold text-green-400">{results.correctCount}/{results.totalQuestions}</p>
+            <p className="text-xs sm:text-sm text-gray-400">Acertos</p>
           </div>
-          <div className="bg-gray-700/50 p-4 rounded-xl">
-            <p className="text-2xl font-bold text-blue-400">{percentage}%</p>
-            <p className="text-sm text-gray-400">Aproveitamento</p>
+          <div className="bg-gray-700/50 p-3 sm:p-4 rounded-xl">
+            <p className="text-xl sm:text-2xl font-bold text-blue-400">{percentage}%</p>
+            <p className="text-xs sm:text-sm text-gray-400">Aproveitamento</p>
           </div>
         </div>
 
         <Link
           to="/leaderboard"
-          className="block w-full bg-[#5a6e3a] text-white py-4 rounded-lg font-semibold text-lg hover:bg-[#4a5a2a] transition"
+          className="block w-full bg-[#5a6e3a] text-white py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:bg-[#4a5a2a] transition"
         >
           Ver Ranking
         </Link>
 
-        <p className="text-gray-500 mt-6 text-sm">
+        <p className="text-gray-500 mt-4 sm:mt-6 text-xs sm:text-sm">
           Obrigado por participar!
         </p>
       </div>
