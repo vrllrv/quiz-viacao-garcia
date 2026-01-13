@@ -25,6 +25,7 @@ export default function Quiz() {
   const [questionStartTime, setQuestionStartTime] = useState(Date.now())
   const [answers, setAnswers] = useState([])
   const [isReady, setIsReady] = useState(false)
+  const [isTransitioning, setIsTransitioning] = useState(false)
 
   const currentQuestion = questions[currentIndex]
   const timeLimit = currentQuestion?.timeLimit || 30
@@ -64,6 +65,8 @@ export default function Quiz() {
       setQuestionStartTime(Date.now())
       reset(currentQuestion.timeLimit || 30)
       start()
+      // Small delay to trigger entrance animation
+      setIsTransitioning(false)
     }
   }, [isReady, currentIndex])
 
@@ -155,9 +158,15 @@ export default function Quiz() {
       return
     }
 
-    setCurrentIndex((prev) => prev + 1)
-    setSelectedAnswer(null)
-    setShowResult(false)
+    // Trigger exit animation
+    setIsTransitioning(true)
+
+    // Wait for exit animation, then change question
+    setTimeout(() => {
+      setCurrentIndex((prev) => prev + 1)
+      setSelectedAnswer(null)
+      setShowResult(false)
+    }, 300)
   }
 
   useEffect(() => {
@@ -170,7 +179,10 @@ export default function Quiz() {
   if (!isReady || !currentQuestion) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center">
-        <p className="text-white text-xl">Carregando...</p>
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-white text-xl animate-pulse">Carregando...</p>
+        </div>
       </div>
     )
   }
@@ -183,31 +195,40 @@ export default function Quiz() {
       <div className="max-w-2xl w-full mx-auto mb-3 sm:mb-6">
         {/* Logo + Progress row */}
         <div className="flex items-center justify-between mb-2 sm:mb-4">
-          <div className="bg-[#333] rounded-lg px-3 py-1.5 sm:px-4 sm:py-2">
+          <div className="bg-[#333] rounded-lg px-3 py-1.5 sm:px-4 sm:py-2 shadow-lg">
             <img src="/logo_garcia.svg" alt="Viação Garcia" className="h-5 sm:h-6" />
           </div>
           <div className="flex items-center gap-3 sm:gap-4 text-sm sm:text-base">
-            <span className="text-gray-400">{currentIndex + 1}/{questions.length}</span>
-            <span className="font-bold text-[#5a6e3a]">{totalScore} pts</span>
+            <span className="text-gray-400 font-medium">{currentIndex + 1}/{questions.length}</span>
+            <span className="font-bold text-emerald-400 tabular-nums flex items-center gap-1">
+              <span className="text-lg">{totalScore}</span>
+              <span className="text-xs text-emerald-500">pts</span>
+            </span>
           </div>
         </div>
         <Timer timeLeft={timeLeft} totalTime={timeLimit} />
       </div>
 
       {/* Question */}
-      <div className="max-w-2xl w-full mx-auto flex-1 flex flex-col">
+      <div className={`max-w-2xl w-full mx-auto flex-1 flex flex-col transition-all duration-300 ${
+        isTransitioning ? 'opacity-0 translate-x-8' : 'opacity-100 translate-x-0'
+      }`}>
         {/* Result Feedback - Shows at TOP after answering */}
-        {showResult && (
-          <div className={`text-center p-3 sm:p-4 rounded-xl mb-3 sm:mb-4 ${
-            lastAnswer?.isCorrect ? 'bg-green-900/50 border-2 border-green-500' : 'bg-red-900/50 border-2 border-red-500'
+        <div className={`overflow-hidden transition-all duration-500 ease-out ${
+          showResult ? 'max-h-32 opacity-100 mb-3 sm:mb-4' : 'max-h-0 opacity-0 mb-0'
+        }`}>
+          <div className={`text-center p-3 sm:p-4 rounded-xl ${
+            lastAnswer?.isCorrect
+              ? 'bg-gradient-to-r from-emerald-900/60 to-emerald-800/60 border-2 border-emerald-500/50 shadow-lg shadow-emerald-500/20'
+              : 'bg-gradient-to-r from-red-900/60 to-red-800/60 border-2 border-red-500/50 shadow-lg shadow-red-500/20'
           }`}>
             {lastAnswer?.isCorrect ? (
-              <div className="flex items-center justify-center gap-3 sm:gap-4">
-                <p className="text-xl sm:text-2xl font-bold text-green-400">Correto!</p>
-                <p className="text-lg sm:text-xl text-green-300">+{lastAnswer.pointsEarned} pts</p>
+              <div className="flex items-center justify-center gap-3 sm:gap-4 animate-bounce-in">
+                <p className="text-xl sm:text-2xl font-bold text-emerald-400">Correto!</p>
+                <p className="text-lg sm:text-xl text-emerald-300 font-semibold">+{lastAnswer.pointsEarned} pts</p>
               </div>
             ) : (
-              <div className="flex items-center justify-center gap-2 flex-wrap">
+              <div className="flex items-center justify-center gap-2 flex-wrap animate-shake">
                 <p className="text-xl sm:text-2xl font-bold text-red-400">
                   {lastAnswer?.selectedOption === 'TIMEOUT' ? 'Tempo esgotado!' : 'Incorreto!'}
                 </p>
@@ -219,27 +240,33 @@ export default function Quiz() {
               </div>
             )}
           </div>
-        )}
+        </div>
 
-        <div className="bg-gray-800 rounded-xl sm:rounded-2xl p-3 sm:p-5 mb-3 sm:mb-4">
-          <h2 className="text-base sm:text-lg md:text-xl font-semibold text-white leading-snug">
+        <div className="bg-gray-800/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-3 sm:mb-4 shadow-xl border border-gray-700/50 animate-fade-in">
+          <h2 className="text-base sm:text-lg md:text-xl font-semibold text-white leading-relaxed">
             {currentQuestion.text}
           </h2>
         </div>
 
         {/* Options */}
         <div className="space-y-2 sm:space-y-3">
-          {currentQuestion.options.map((option) => (
-            <AnswerButton
+          {currentQuestion.options.map((option, index) => (
+            <div
               key={option.key}
-              option={option}
-              selected={selectedAnswer === option.key}
-              correct={currentQuestion.correct}
-              showResult={showResult}
-              showCorrectAnswer={quiz?.showCorrectAnswer ?? true}
-              onClick={handleSelectAnswer}
-              disabled={showResult}
-            />
+              className="animate-slide-up"
+              style={{ animationDelay: `${index * 75}ms` }}
+            >
+              <AnswerButton
+                option={option}
+                selected={selectedAnswer === option.key}
+                correct={currentQuestion.correct}
+                showResult={showResult}
+                showCorrectAnswer={quiz?.showCorrectAnswer ?? true}
+                onClick={handleSelectAnswer}
+                disabled={showResult}
+                index={index}
+              />
+            </div>
           ))}
         </div>
       </div>
