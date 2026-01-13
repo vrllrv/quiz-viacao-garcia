@@ -16,6 +16,9 @@ export default function Leaderboard() {
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE)
   const lastUpdateRef = useRef(Date.now())
 
+  // Get user's quiz from localStorage (only show their quiz)
+  const userQuiz = localStorage.getItem('participantQuiz')
+
   // Debounced fetch to avoid hammering DB on realtime updates
   const fetchLeaderboard = useCallback(async () => {
     if (!supabase) {
@@ -43,6 +46,11 @@ export default function Leaderboard() {
         .order('total_score', { ascending: false })
         .limit(limit)
 
+      // Filter by user's quiz (only show participants from same quiz)
+      if (userQuiz) {
+        query = query.eq('quiz_name', userQuiz)
+      }
+
       if (departmentFilter) {
         query = query.eq('departamento', departmentFilter)
       }
@@ -57,12 +65,18 @@ export default function Leaderboard() {
       setParticipants(data || [])
       setTotalCount(count || 0)
 
-      // Fetch unique departments for filter
+      // Fetch unique departments for filter (within user's quiz)
       if (departments.length === 0) {
-        const { data: deptData } = await supabase
+        let deptQuery = supabase
           .from('participants')
           .select('departamento')
           .eq('completed', true)
+
+        if (userQuiz) {
+          deptQuery = deptQuery.eq('quiz_name', userQuiz)
+        }
+
+        const { data: deptData } = await deptQuery
 
         if (deptData) {
           const uniqueDepts = [...new Set(deptData.map(d => d.departamento))].filter(Boolean).sort()
@@ -74,7 +88,7 @@ export default function Leaderboard() {
     } finally {
       setLoading(false)
     }
-  }, [limit, searchTerm, departmentFilter])
+  }, [limit, searchTerm, departmentFilter, userQuiz])
 
   useEffect(() => {
     fetchLeaderboard()

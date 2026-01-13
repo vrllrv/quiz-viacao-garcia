@@ -18,16 +18,23 @@ export default function Result() {
     const data = JSON.parse(stored)
     setResults(data)
 
-    // Get position in leaderboard
+    // Get position in leaderboard (filtered by quiz)
     const fetchPosition = async () => {
       const participantId = localStorage.getItem('participantId')
+      const quizName = localStorage.getItem('participantQuiz')
       if (supabase && participantId && !participantId.startsWith('demo-')) {
         try {
-          const { data: participants } = await supabase
+          let query = supabase
             .from('participants')
             .select('id, total_score')
             .eq('completed', true)
             .order('total_score', { ascending: false })
+
+          if (quizName) {
+            query = query.eq('quiz_name', quizName)
+          }
+
+          const { data: participants } = await query
 
           const pos = participants?.findIndex(p => p.id === participantId)
           if (pos !== -1) {

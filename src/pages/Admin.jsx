@@ -27,7 +27,9 @@ export default function Admin() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [departmentFilter, setDepartmentFilter] = useState('')
+  const [quizFilter, setQuizFilter] = useState('')
   const [departments, setDepartments] = useState([])
+  const [quizNames, setQuizNames] = useState([])
   const [stats, setStats] = useState({ total: 0, completed: 0, avgScore: 0 })
 
   const refreshQuizData = () => {
@@ -49,6 +51,7 @@ export default function Admin() {
       refreshQuizData()
       fetchStats()
       fetchDepartments()
+      fetchQuizNames()
     }
   }, [isAuthenticated])
 
@@ -70,7 +73,24 @@ export default function Admin() {
 
   useEffect(() => {
     fetchParticipants()
-  }, [currentPage, searchTerm, statusFilter, departmentFilter])
+  }, [currentPage, searchTerm, statusFilter, departmentFilter, quizFilter])
+
+  const fetchQuizNames = async () => {
+    if (!supabase) return
+
+    try {
+      const { data } = await supabase
+        .from('participants')
+        .select('quiz_name')
+
+      if (data) {
+        const uniqueQuizzes = [...new Set(data.map(d => d.quiz_name))].filter(Boolean).sort()
+        setQuizNames(uniqueQuizzes)
+      }
+    } catch (err) {
+      console.error('Error fetching quiz names:', err)
+    }
+  }
 
   const fetchStats = async () => {
     if (!supabase) {
@@ -154,6 +174,10 @@ export default function Admin() {
         query = query.eq('departamento', departmentFilter)
       }
 
+      if (quizFilter) {
+        query = query.eq('quiz_name', quizFilter)
+      }
+
       const { data, error, count } = await query
 
       if (error) throw error
@@ -164,7 +188,7 @@ export default function Admin() {
     } finally {
       setLoading(false)
     }
-  }, [currentPage, searchTerm, statusFilter, departmentFilter])
+  }, [currentPage, searchTerm, statusFilter, departmentFilter, quizFilter])
 
   const resetQuiz = async () => {
     if (!confirm('Tem certeza que deseja resetar o quiz? Todos os dados serão apagados.')) {
@@ -249,6 +273,7 @@ export default function Admin() {
     setSearchTerm('')
     setStatusFilter('')
     setDepartmentFilter('')
+    setQuizFilter('')
     setCurrentPage(1)
   }
 
@@ -451,8 +476,25 @@ export default function Admin() {
                   </select>
                 </div>
 
+                {/* Quiz Filter */}
+                <div className="md:w-48">
+                  <select
+                    value={quizFilter}
+                    onChange={(e) => {
+                      setQuizFilter(e.target.value)
+                      setCurrentPage(1)
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                  >
+                    <option value="">Todos quizzes</option>
+                    {quizNames.map(quiz => (
+                      <option key={quiz} value={quiz}>{quiz}</option>
+                    ))}
+                  </select>
+                </div>
+
                 {/* Clear Filters */}
-                {(searchTerm || statusFilter || departmentFilter) && (
+                {(searchTerm || statusFilter || departmentFilter || quizFilter) && (
                   <button
                     onClick={handleClearFilters}
                     className="px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition"
@@ -465,7 +507,7 @@ export default function Admin() {
               {/* Results count */}
               <div className="mt-3 text-sm text-gray-500">
                 Mostrando {participants.length} de {totalCount} participantes
-                {(searchTerm || statusFilter || departmentFilter) && ' (filtrado)'}
+                {(searchTerm || statusFilter || departmentFilter || quizFilter) && ' (filtrado)'}
               </div>
             </div>
 

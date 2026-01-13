@@ -34,6 +34,8 @@ export default function Home() {
     }
 
     try {
+      const quizName = activeQuiz?.name || QUIZ_CONFIG.title
+
       if (supabase) {
         const { data, error: dbError } = await supabase
           .from('participants')
@@ -41,6 +43,7 @@ export default function Home() {
             full_name: formData.fullName,
             matricula: formData.matricula,
             departamento: formData.departamento,
+            quiz_name: quizName,
           })
           .select()
           .single()
@@ -49,11 +52,13 @@ export default function Home() {
 
         localStorage.setItem('participantId', data.id)
         localStorage.setItem('participantName', data.full_name)
+        localStorage.setItem('participantQuiz', quizName)
       } else {
         // Demo mode - generate fake ID
         const fakeId = 'demo-' + Date.now()
         localStorage.setItem('participantId', fakeId)
         localStorage.setItem('participantName', formData.fullName)
+        localStorage.setItem('participantQuiz', quizName)
       }
 
       navigate('/quiz')

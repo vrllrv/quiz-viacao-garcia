@@ -94,6 +94,7 @@ export default function Quiz() {
 
     // Save to Supabase
     const participantId = localStorage.getItem('participantId')
+    const quizName = localStorage.getItem('participantQuiz') || quiz?.name || 'Quiz'
     if (supabase && participantId && !participantId.startsWith('demo-')) {
       try {
         await supabase.from('answers').insert({
@@ -103,6 +104,7 @@ export default function Quiz() {
           is_correct: isCorrect,
           time_taken_ms: timeTaken,
           points_earned: points,
+          quiz_name: quizName,
         })
       } catch (err) {
         console.error('Error saving answer:', err)
