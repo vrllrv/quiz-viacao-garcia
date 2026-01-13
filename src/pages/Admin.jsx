@@ -5,10 +5,20 @@ import QuestionEditor from '../components/QuestionEditor'
 import QuizManager from '../components/QuizManager'
 
 const ITEMS_PER_PAGE = 50
-const ADMIN_PASSWORD = 'garcia2024'
+// SHA-256 hash of the admin password - much harder to reverse than plaintext
+const ADMIN_PASSWORD_HASH = import.meta.env.VITE_ADMIN_PASSWORD_HASH || ''
 const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1u2S_Pw-PpIj5sGcoRkdlHNYcMzN6Lxm1iR20mI8LWoM/edit'
 // Active users = participants who started in the last 10 minutes and haven't completed
 const ACTIVE_THRESHOLD_MINUTES = 10
+
+// Hash function using Web Crypto API
+async function hashPassword(password) {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(password)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+}
 
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -108,9 +118,10 @@ export default function Admin() {
     }
   }, [isAuthenticated])
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
-    if (passwordInput === ADMIN_PASSWORD) {
+    const inputHash = await hashPassword(passwordInput)
+    if (inputHash === ADMIN_PASSWORD_HASH) {
       setIsAuthenticated(true)
       sessionStorage.setItem('adminAuth', 'true')
       setPasswordError('')
