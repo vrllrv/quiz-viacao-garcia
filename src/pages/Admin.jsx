@@ -332,48 +332,51 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 md:p-8">
+    <div className="min-h-screen bg-gray-100 p-2 sm:p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800">Admin - Quiz</h1>
-            <p className="text-gray-600">Gerenciamento do quiz</p>
-          </div>
-          <div className="flex gap-3">
-            <button
-              onClick={openGoogleSheet}
-              className="bg-[#5a6e3a] text-white px-4 py-2 rounded-lg hover:bg-[#4a5a2a] transition flex items-center gap-2"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-              Abrir Planilha
-            </button>
-            <button
-              onClick={clearParticipants}
-              disabled={resetting || stats.total === 0}
-              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition disabled:opacity-50 flex items-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-              {resetting ? 'Limpando...' : 'Limpar Participantes'}
-            </button>
+        <div className="flex flex-col gap-4 mb-6 md:mb-8">
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">Admin - Quiz</h1>
+              <p className="text-sm sm:text-base text-gray-600">Gerenciamento do quiz</p>
+            </div>
             <button
               onClick={handleLogout}
-              className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition"
+              className="bg-gray-500 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-600 transition text-sm sm:text-base"
             >
               Sair
             </button>
           </div>
+          {/* Action buttons - responsive grid */}
+          <div className="grid grid-cols-2 sm:flex gap-2 sm:gap-3">
+            <button
+              onClick={openGoogleSheet}
+              className="bg-[#5a6e3a] text-white px-3 py-2 sm:px-4 rounded-lg hover:bg-[#4a5a2a] transition flex items-center justify-center gap-2 text-sm sm:text-base"
+            >
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+              <span className="hidden xs:inline">Abrir</span> Planilha
+            </button>
+            <button
+              onClick={clearParticipants}
+              disabled={resetting || stats.total === 0}
+              className="bg-red-600 text-white px-3 py-2 sm:px-4 rounded-lg hover:bg-red-700 transition disabled:opacity-50 flex items-center justify-center gap-2 text-sm sm:text-base"
+            >
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              {resetting ? 'Limpando...' : <><span className="hidden sm:inline">Limpar</span> <span className="sm:hidden">Limpar</span></>}
+            </button>
+          </div>
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-2 mb-6">
+        {/* Tabs - scrollable on mobile */}
+        <div className="flex gap-2 mb-4 md:mb-6 overflow-x-auto pb-2 -mx-2 px-2 sm:mx-0 sm:px-0">
           <button
             onClick={() => setActiveTab('participants')}
-            className={`px-4 py-2 rounded-lg font-medium transition ${
+            className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition whitespace-nowrap text-sm sm:text-base ${
               activeTab === 'participants'
                 ? 'bg-[#5a6e3a] text-white'
                 : 'bg-white text-gray-600 hover:bg-gray-50'
@@ -383,7 +386,7 @@ export default function Admin() {
           </button>
           <button
             onClick={() => setActiveTab('quizzes')}
-            className={`px-4 py-2 rounded-lg font-medium transition ${
+            className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition whitespace-nowrap text-sm sm:text-base ${
               activeTab === 'quizzes'
                 ? 'bg-[#5a6e3a] text-white'
                 : 'bg-white text-gray-600 hover:bg-gray-50'
@@ -393,7 +396,7 @@ export default function Admin() {
           </button>
           <button
             onClick={() => setActiveTab('questions')}
-            className={`px-4 py-2 rounded-lg font-medium transition ${
+            className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition whitespace-nowrap text-sm sm:text-base ${
               activeTab === 'questions'
                 ? 'bg-[#5a6e3a] text-white'
                 : 'bg-white text-gray-600 hover:bg-gray-50'
@@ -405,14 +408,14 @@ export default function Admin() {
 
         {/* Active Quiz indicator */}
         {activeQuiz && (
-          <div className="bg-[#5a6e3a]/10 border border-[#5a6e3a]/30 rounded-lg p-3 mb-6 flex items-center justify-between">
-            <div>
-              <span className="text-sm text-[#5a6e3a]">Quiz ativo:</span>
+          <div className="bg-[#5a6e3a]/10 border border-[#5a6e3a]/30 rounded-lg p-2 sm:p-3 mb-4 md:mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="text-sm sm:text-base">
+              <span className="text-[#5a6e3a]">Quiz ativo:</span>
               <span className="ml-2 font-medium text-[#4a5a2a]">{activeQuiz.name}</span>
             </div>
             <button
               onClick={() => setActiveTab('quizzes')}
-              className="text-sm text-[#5a6e3a] hover:text-[#4a5a2a] hover:underline"
+              className="text-sm text-[#5a6e3a] hover:text-[#4a5a2a] hover:underline self-start sm:self-auto"
             >
               Alterar
             </button>
@@ -420,7 +423,7 @@ export default function Admin() {
         )}
 
         {activeTab === 'quizzes' && (
-          <div className="bg-white rounded-xl shadow p-6">
+          <div className="bg-white rounded-xl shadow p-3 sm:p-4 md:p-6">
             <QuizManager
               onSelectQuiz={(quiz) => {
                 refreshQuizData()
@@ -433,26 +436,26 @@ export default function Admin() {
         {activeTab === 'participants' && (
           <>
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-white p-6 rounded-xl shadow">
-                <p className="text-3xl font-bold text-[#5a6e3a]">{stats.total}</p>
-                <p className="text-gray-600">Total Participantes</p>
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 md:mb-6">
+              <div className="bg-white p-3 sm:p-4 md:p-6 rounded-xl shadow">
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold text-[#5a6e3a]">{stats.total}</p>
+                <p className="text-xs sm:text-sm md:text-base text-gray-600">Total</p>
               </div>
-              <div className="bg-white p-6 rounded-xl shadow">
-                <p className="text-3xl font-bold text-green-600">{stats.completed}</p>
-                <p className="text-gray-600">Finalizados</p>
+              <div className="bg-white p-3 sm:p-4 md:p-6 rounded-xl shadow">
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold text-green-600">{stats.completed}</p>
+                <p className="text-xs sm:text-sm md:text-base text-gray-600">Finalizados</p>
               </div>
-              <div className="bg-white p-6 rounded-xl shadow">
-                <p className="text-3xl font-bold text-purple-600">{stats.avgScore}</p>
-                <p className="text-gray-600">Média de Pontos</p>
+              <div className="bg-white p-3 sm:p-4 md:p-6 rounded-xl shadow">
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold text-purple-600">{stats.avgScore}</p>
+                <p className="text-xs sm:text-sm md:text-base text-gray-600">Média pts</p>
               </div>
             </div>
 
             {/* Filters */}
-            <div className="bg-white rounded-xl shadow p-4 mb-6">
-              <div className="flex flex-col md:flex-row gap-4">
-                {/* Search */}
-                <div className="flex-1">
+            <div className="bg-white rounded-xl shadow p-3 sm:p-4 mb-4 md:mb-6">
+              <div className="flex flex-col gap-3 md:gap-4">
+                {/* Search - full width on all */}
+                <div className="w-full">
                   <input
                     type="text"
                     placeholder="Buscar por nome ou matrícula..."
@@ -461,9 +464,12 @@ export default function Admin() {
                       setSearchTerm(e.target.value)
                       setCurrentPage(1)
                     }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent text-gray-900"
+                    className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent text-gray-900 text-sm sm:text-base"
                   />
                 </div>
+
+                {/* Filter row */}
+                <div className="grid grid-cols-2 md:flex gap-2 md:gap-4">
 
                 {/* Status Filter */}
                 <div className="md:w-40">
@@ -473,9 +479,9 @@ export default function Admin() {
                       setStatusFilter(e.target.value)
                       setCurrentPage(1)
                     }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent text-gray-900"
+                    className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent text-gray-900 text-sm sm:text-base"
                   >
-                    <option value="">Todos status</option>
+                    <option value="">Status</option>
                     <option value="completed">Finalizados</option>
                     <option value="in_progress">Em andamento</option>
                   </select>
@@ -489,9 +495,9 @@ export default function Admin() {
                       setDepartmentFilter(e.target.value)
                       setCurrentPage(1)
                     }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent text-gray-900"
+                    className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent text-gray-900 text-sm sm:text-base"
                   >
-                    <option value="">Todos departamentos</option>
+                    <option value="">Departamento</option>
                     {departments.map(dept => (
                       <option key={dept} value={dept}>{dept}</option>
                     ))}
@@ -506,9 +512,9 @@ export default function Admin() {
                       setQuizFilter(e.target.value)
                       setCurrentPage(1)
                     }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent text-gray-900"
+                    className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent text-gray-900 text-sm sm:text-base"
                   >
-                    <option value="">Todos quizzes</option>
+                    <option value="">Quiz</option>
                     {quizNames.map(quiz => (
                       <option key={quiz} value={quiz}>{quiz}</option>
                     ))}
@@ -519,42 +525,44 @@ export default function Admin() {
                 {(searchTerm || statusFilter || departmentFilter || quizFilter) && (
                   <button
                     onClick={handleClearFilters}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition"
+                    className="col-span-2 md:col-span-1 px-3 sm:px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition text-sm sm:text-base"
                   >
-                    Limpar
+                    Limpar filtros
                   </button>
                 )}
+                </div>
               </div>
 
               {/* Results count */}
-              <div className="mt-3 text-sm text-gray-500">
+              <div className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-500">
                 Mostrando {participants.length} de {totalCount} participantes
                 {(searchTerm || statusFilter || departmentFilter || quizFilter) && ' (filtrado)'}
               </div>
             </div>
 
-            {/* Table */}
+            {/* Table - Cards on mobile, table on desktop */}
             <div className="bg-white rounded-xl shadow overflow-hidden">
-              <div className="overflow-x-auto">
+              {/* Desktop Table */}
+              <div className="hidden md:block overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Nome
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Matrícula
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Departamento
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Dept
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Pontuação
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Pontos
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Data
                       </th>
                     </tr>
@@ -562,13 +570,13 @@ export default function Admin() {
                   <tbody className="divide-y divide-gray-200">
                     {loading ? (
                       <tr>
-                        <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
+                        <td colSpan="6" className="px-4 py-12 text-center text-gray-500">
                           Carregando...
                         </td>
                       </tr>
                     ) : participants.length === 0 ? (
                       <tr>
-                        <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
+                        <td colSpan="6" className="px-4 py-12 text-center text-gray-500">
                           {searchTerm || statusFilter || departmentFilter
                             ? 'Nenhum resultado encontrado'
                             : 'Nenhum participante ainda'}
@@ -577,34 +585,34 @@ export default function Admin() {
                     ) : (
                       participants.map((p) => (
                         <tr key={p.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                          <td className="px-4 py-3 whitespace-nowrap font-medium text-gray-900 text-sm">
                             {p.full_name}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                          <td className="px-4 py-3 whitespace-nowrap text-gray-600 text-sm">
                             {p.matricula}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                          <td className="px-4 py-3 whitespace-nowrap text-gray-600 text-sm">
                             {p.departamento}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-4 py-3 whitespace-nowrap text-sm">
                             <span className="font-bold text-[#5a6e3a]">{p.total_score || 0}</span>
-                            <span className="text-gray-400 text-sm ml-1">
+                            <span className="text-gray-400 text-xs ml-1">
                               ({p.correct_count || 0}/{questions.length})
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-4 py-3 whitespace-nowrap">
                             {p.completed ? (
                               <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
-                                Finalizado
+                                OK
                               </span>
                             ) : (
                               <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
-                                Em andamento
+                                ...
                               </span>
                             )}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-gray-500 text-sm">
-                            {new Date(p.created_at).toLocaleString('pt-BR')}
+                          <td className="px-4 py-3 whitespace-nowrap text-gray-500 text-xs">
+                            {new Date(p.created_at).toLocaleDateString('pt-BR')}
                           </td>
                         </tr>
                       ))
@@ -613,40 +621,81 @@ export default function Admin() {
                 </table>
               </div>
 
+              {/* Mobile Cards */}
+              <div className="md:hidden divide-y divide-gray-200">
+                {loading ? (
+                  <div className="px-4 py-12 text-center text-gray-500">Carregando...</div>
+                ) : participants.length === 0 ? (
+                  <div className="px-4 py-12 text-center text-gray-500">
+                    {searchTerm || statusFilter || departmentFilter
+                      ? 'Nenhum resultado encontrado'
+                      : 'Nenhum participante ainda'}
+                  </div>
+                ) : (
+                  participants.map((p) => (
+                    <div key={p.id} className="p-3 hover:bg-gray-50">
+                      <div className="flex justify-between items-start mb-1">
+                        <div className="font-medium text-gray-900 text-sm">{p.full_name}</div>
+                        <span className="font-bold text-[#5a6e3a]">{p.total_score || 0} pts</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2 text-xs text-gray-500">
+                        <span>#{p.matricula}</span>
+                        {p.departamento && <span>· {p.departamento}</span>}
+                        <span>· {p.correct_count || 0}/{questions.length} acertos</span>
+                      </div>
+                      <div className="flex justify-between items-center mt-2">
+                        <span className="text-xs text-gray-400">
+                          {new Date(p.created_at).toLocaleDateString('pt-BR')}
+                        </span>
+                        {p.completed ? (
+                          <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                            Finalizado
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
+                            Em andamento
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="px-6 py-4 border-t flex items-center justify-between">
-                  <div className="text-sm text-gray-500">
+                <div className="px-3 sm:px-6 py-3 sm:py-4 border-t flex flex-col sm:flex-row items-center justify-between gap-2">
+                  <div className="text-xs sm:text-sm text-gray-500">
                     Página {currentPage} de {totalPages}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-1 sm:gap-2">
                     <button
                       onClick={() => setCurrentPage(1)}
                       disabled={!canGoPrev}
-                      className="px-3 py-1 rounded border text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      className="px-2 sm:px-3 py-1 rounded border text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                     >
-                      Primeira
+                      «
                     </button>
                     <button
                       onClick={() => setCurrentPage(p => p - 1)}
                       disabled={!canGoPrev}
-                      className="px-3 py-1 rounded border text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      className="px-2 sm:px-3 py-1 rounded border text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                     >
-                      Anterior
+                      ‹ Ant
                     </button>
                     <button
                       onClick={() => setCurrentPage(p => p + 1)}
                       disabled={!canGoNext}
-                      className="px-3 py-1 rounded border text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      className="px-2 sm:px-3 py-1 rounded border text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                     >
-                      Próxima
+                      Próx ›
                     </button>
                     <button
                       onClick={() => setCurrentPage(totalPages)}
                       disabled={!canGoNext}
-                      className="px-3 py-1 rounded border text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      className="px-2 sm:px-3 py-1 rounded border text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                     >
-                      Última
+                      »
                     </button>
                   </div>
                 </div>
@@ -658,33 +707,35 @@ export default function Admin() {
         {activeTab === 'questions' && (
           <>
             {/* Questions Header */}
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center gap-4">
-                <p className="text-gray-600">
-                  {questions.length} pergunta{questions.length !== 1 ? 's' : ''} configurada{questions.length !== 1 ? 's' : ''}
+            <div className="flex flex-col gap-3 mb-4">
+              {/* Stats row */}
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-sm sm:text-base text-gray-600">
+                  {questions.length} pergunta{questions.length !== 1 ? 's' : ''}
                 </p>
-                <span className="text-sm text-purple-600 bg-purple-100 px-3 py-1 rounded-full font-medium">
-                  Total: {questions.reduce((sum, q) => sum + (q.points || 100), 0)} pts
-                  (max: {Math.round(questions.reduce((sum, q) => {
+                <span className="text-xs sm:text-sm text-purple-600 bg-purple-100 px-2 sm:px-3 py-1 rounded-full font-medium">
+                  {questions.reduce((sum, q) => sum + (q.points || 100), 0)} pts
+                  <span className="hidden sm:inline"> (max: {Math.round(questions.reduce((sum, q) => {
                     const pts = q.points || 100
                     const bonus = q.speedBonus ?? activeQuiz?.speedBonus ?? 50
                     return sum + pts * (1 + bonus / 100)
-                  }, 0))} pts)
+                  }, 0))})</span>
                 </span>
-                <span className="text-sm text-orange-600 bg-orange-100 px-3 py-1 rounded-full font-medium">
-                  Bonus padrão: {activeQuiz?.speedBonus ?? 50}%
+                <span className="text-xs sm:text-sm text-orange-600 bg-orange-100 px-2 sm:px-3 py-1 rounded-full font-medium">
+                  Bonus: {activeQuiz?.speedBonus ?? 50}%
                 </span>
               </div>
-              <div className="flex gap-3">
+              {/* Actions row */}
+              <div className="flex gap-2 sm:gap-3">
                 <button
                   onClick={handleResetQuestions}
-                  className="text-gray-600 hover:text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-200 transition"
+                  className="text-gray-600 hover:text-gray-800 px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-200 transition text-sm sm:text-base"
                 >
                   Restaurar Padrão
                 </button>
                 <button
                   onClick={handleAddQuestion}
-                  className="bg-[#5a6e3a] text-white px-4 py-2 rounded-lg hover:bg-[#4a5a2a] transition"
+                  className="bg-[#5a6e3a] text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-[#4a5a2a] transition text-sm sm:text-base"
                 >
                   + Nova Pergunta
                 </button>
@@ -692,78 +743,78 @@ export default function Admin() {
             </div>
 
             {/* Questions List */}
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {questions.length === 0 ? (
-                <div className="bg-white rounded-xl p-12 text-center text-gray-500">
+                <div className="bg-white rounded-xl p-8 sm:p-12 text-center text-gray-500 text-sm sm:text-base">
                   Nenhuma pergunta configurada. Clique em "Nova Pergunta" para começar.
                 </div>
               ) : (
                 questions.map((question, index) => (
                   <div
                     key={question.id}
-                    className="bg-white rounded-xl p-4 shadow hover:shadow-md transition"
+                    className="bg-white rounded-xl p-3 sm:p-4 shadow hover:shadow-md transition"
                   >
-                    <div className="flex items-start gap-4">
+                    <div className="flex items-start gap-2 sm:gap-4">
                       {/* Order controls */}
-                      <div className="flex flex-col gap-1">
+                      <div className="flex flex-col gap-0.5 sm:gap-1">
                         <button
                           onClick={() => moveQuestion(index, -1)}
                           disabled={index === 0}
-                          className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="p-0.5 sm:p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed"
                         >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                           </svg>
                         </button>
-                        <span className="text-center text-sm font-bold text-gray-400">{index + 1}</span>
+                        <span className="text-center text-xs sm:text-sm font-bold text-gray-400">{index + 1}</span>
                         <button
                           onClick={() => moveQuestion(index, 1)}
                           disabled={index === questions.length - 1}
-                          className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="p-0.5 sm:p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed"
                         >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                           </svg>
                         </button>
                       </div>
 
                       {/* Question content */}
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-800 mb-2">{question.text}</p>
-                        <div className="flex flex-wrap gap-2 text-sm">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-800 mb-2 text-sm sm:text-base">{question.text}</p>
+                        <div className="flex flex-wrap gap-1 sm:gap-2 text-xs sm:text-sm">
                           {question.options.map(opt => (
                             <span
                               key={opt.key}
-                              className={`px-2 py-1 rounded ${
+                              className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded ${
                                 opt.key === question.correct
                                   ? 'bg-green-100 text-green-800'
                                   : 'bg-gray-100 text-gray-600'
                               }`}
                             >
-                              {opt.key}) {opt.text}
+                              {opt.key}) <span className="hidden sm:inline">{opt.text}</span><span className="sm:hidden">{opt.text.substring(0, 15)}{opt.text.length > 15 ? '...' : ''}</span>
                             </span>
                           ))}
                         </div>
                       </div>
 
                       {/* Time, Points, Bonus and actions */}
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-purple-600 bg-purple-100 px-3 py-1 rounded-full font-medium">
-                          {question.points || 100} pts
+                      <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1 sm:gap-2">
+                        <span className="text-xs sm:text-sm text-purple-600 bg-purple-100 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-medium">
+                          {question.points || 100}p
                         </span>
-                        <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                        <span className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
                           {question.timeLimit}s
                         </span>
                         {question.speedBonus !== null && question.speedBonus !== undefined && (
-                          <span className="text-sm text-orange-600 bg-orange-100 px-3 py-1 rounded-full font-medium">
+                          <span className="hidden sm:inline text-xs sm:text-sm text-orange-600 bg-orange-100 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-medium">
                             +{question.speedBonus}%
                           </span>
                         )}
                         <button
                           onClick={() => handleEditQuestion(question)}
-                          className="text-[#5a6e3a] hover:text-[#4a5a2a] p-2 rounded-lg hover:bg-[#5a6e3a]/10 transition"
+                          className="text-[#5a6e3a] hover:text-[#4a5a2a] p-1.5 sm:p-2 rounded-lg hover:bg-[#5a6e3a]/10 transition"
                         >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                           </svg>
                         </button>

@@ -69,13 +69,13 @@ export default function QuizManager({ onSelectQuiz }) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-gray-800">Gerenciar Quizzes</h2>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <h2 className="text-lg md:text-xl font-bold text-gray-800">Gerenciar Quizzes</h2>
         <button
           onClick={handleCreate}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
+          className="w-full sm:w-auto px-4 py-2 bg-[#5a6e3a] text-white rounded-lg hover:bg-[#4a5a2a] transition flex items-center justify-center gap-2"
         >
           <span>+</span> Novo Quiz
         </button>
@@ -86,72 +86,72 @@ export default function QuizManager({ onSelectQuiz }) {
         {quizzes.map((quiz) => (
           <div
             key={quiz.id}
-            className={`p-4 rounded-xl border-2 transition ${
+            className={`p-3 md:p-4 rounded-xl border-2 transition ${
               quiz.isActive
                 ? 'bg-green-50 border-green-500'
                 : 'bg-white border-gray-200 hover:border-gray-300'
             }`}
           >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-bold text-gray-800 truncate">{quiz.name}</h3>
-                  {quiz.isActive && (
-                    <span className="px-2 py-0.5 bg-green-500 text-white text-xs rounded-full">
-                      Ativo
-                    </span>
-                  )}
-                </div>
-                <p className="text-sm text-gray-500 truncate">
-                  {quiz.description || 'Sem descrição'}
-                </p>
-                <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
-                  <span>{quiz.questions?.length || 0} perguntas</span>
-                  <span>Bonus: {quiz.speedBonus ?? 50}%</span>
-                  <span>Criado em {new Date(quiz.createdAt).toLocaleDateString('pt-BR')}</span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 flex-shrink-0">
-                {!quiz.isActive && (
-                  <button
-                    onClick={() => handleSetActive(quiz.id)}
-                    className="px-3 py-1.5 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition"
-                    title="Ativar quiz"
-                  >
-                    Ativar
-                  </button>
+            {/* Quiz Info */}
+            <div className="flex-1 min-w-0 mb-3">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <h3 className="font-bold text-gray-800">{quiz.name}</h3>
+                {quiz.isActive && (
+                  <span className="px-2 py-0.5 bg-green-500 text-white text-xs rounded-full">
+                    Ativo
+                  </span>
                 )}
-                <button
-                  onClick={() => handleManageQuestions(quiz)}
-                  className="px-3 py-1.5 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition"
-                  title="Gerenciar perguntas"
-                >
-                  Perguntas
-                </button>
-                <button
-                  onClick={() => handleEdit(quiz)}
-                  className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
-                  title="Editar quiz"
-                >
-                  Editar
-                </button>
-                <button
-                  onClick={() => handleDuplicate(quiz.id)}
-                  className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
-                  title="Duplicar quiz"
-                >
-                  Duplicar
-                </button>
-                <button
-                  onClick={() => handleDelete(quiz.id)}
-                  className="px-3 py-1.5 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition"
-                  title="Excluir quiz"
-                  disabled={quizzes.length <= 1}
-                >
-                  Excluir
-                </button>
               </div>
+              <p className="text-sm text-gray-500 line-clamp-2">
+                {quiz.description || 'Sem descrição'}
+              </p>
+              <div className="flex flex-wrap items-center gap-2 md:gap-4 mt-2 text-xs text-gray-400">
+                <span>{quiz.questions?.length || 0} perguntas</span>
+                <span>Bonus: {quiz.speedBonus ?? 50}%</span>
+                <span className="hidden sm:inline">Criado em {new Date(quiz.createdAt).toLocaleDateString('pt-BR')}</span>
+              </div>
+            </div>
+
+            {/* Action Buttons - Grid on mobile, flex on desktop */}
+            <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
+              {!quiz.isActive && (
+                <button
+                  onClick={() => handleSetActive(quiz.id)}
+                  className="px-3 py-2 sm:py-1.5 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition text-center"
+                  title="Ativar quiz"
+                >
+                  Ativar
+                </button>
+              )}
+              <button
+                onClick={() => handleManageQuestions(quiz)}
+                className="px-3 py-2 sm:py-1.5 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition text-center"
+                title="Gerenciar perguntas"
+              >
+                Perguntas
+              </button>
+              <button
+                onClick={() => handleEdit(quiz)}
+                className="px-3 py-2 sm:py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-center"
+                title="Editar quiz"
+              >
+                Editar
+              </button>
+              <button
+                onClick={() => handleDuplicate(quiz.id)}
+                className="px-3 py-2 sm:py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-center"
+                title="Duplicar quiz"
+              >
+                Duplicar
+              </button>
+              <button
+                onClick={() => handleDelete(quiz.id)}
+                className="px-3 py-2 sm:py-1.5 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition text-center col-span-2 sm:col-span-1"
+                title="Excluir quiz"
+                disabled={quizzes.length <= 1}
+              >
+                Excluir
+              </button>
             </div>
           </div>
         ))}
@@ -211,15 +211,15 @@ function QuizForm({ quiz, onSave, onCancel }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
-        <div className="p-6 border-b">
-          <h2 className="text-xl font-bold text-gray-800">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-2 sm:p-4 z-50">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[95vh] overflow-y-auto">
+        <div className="p-4 sm:p-6 border-b sticky top-0 bg-white z-10">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800">
             {quiz ? 'Editar Quiz' : 'Novo Quiz'}
           </h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Nome do Quiz *
@@ -228,7 +228,7 @@ function QuizForm({ quiz, onSave, onCancel }) {
               type="text"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 ${
+              className={`w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent text-gray-900 ${
                 errors.name ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="Ex: Quiz de Integração 2024"
@@ -244,7 +244,7 @@ function QuizForm({ quiz, onSave, onCancel }) {
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={3}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+              className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent text-gray-900"
               placeholder="Descrição opcional do quiz..."
             />
           </div>
@@ -253,7 +253,7 @@ function QuizForm({ quiz, onSave, onCancel }) {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Bonus de Velocidade (%)
             </label>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
               <input
                 type="number"
                 value={form.speedBonus}
@@ -261,15 +261,15 @@ function QuizForm({ quiz, onSave, onCancel }) {
                 min={0}
                 max={100}
                 step={5}
-                className="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent text-gray-900"
               />
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {[0, 25, 50, 75, 100].map((b) => (
                   <button
                     key={b}
                     type="button"
                     onClick={() => setForm({ ...form, speedBonus: b })}
-                    className={`px-3 py-1 rounded text-sm ${
+                    className={`px-3 py-1.5 sm:py-1 rounded text-sm ${
                       form.speedBonus === b
                         ? 'bg-orange-500 text-white'
                         : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
@@ -286,12 +286,12 @@ function QuizForm({ quiz, onSave, onCancel }) {
           </div>
 
           <div>
-            <label className="flex items-center gap-3 cursor-pointer">
+            <label className="flex items-start sm:items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"
                 checked={form.showCorrectAnswer}
                 onChange={(e) => setForm({ ...form, showCorrectAnswer: e.target.checked })}
-                className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="w-5 h-5 mt-0.5 sm:mt-0 rounded border-gray-300 text-[#5a6e3a] focus:ring-[#5a6e3a]"
               />
               <div>
                 <span className="text-sm font-medium text-gray-700">Mostrar resposta correta</span>
@@ -302,17 +302,17 @@ function QuizForm({ quiz, onSave, onCancel }) {
             </label>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-4 border-t">
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+              className="w-full sm:w-auto px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              className="w-full sm:w-auto px-6 py-2 bg-[#5a6e3a] text-white rounded-lg hover:bg-[#4a5a2a] transition"
             >
               Salvar
             </button>

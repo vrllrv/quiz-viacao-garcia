@@ -83,15 +83,15 @@ export default function QuestionEditor({ question, onSave, onCancel, onDelete })
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b">
-          <h2 className="text-xl font-bold text-gray-800">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-2 sm:p-4 z-50">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[95vh] overflow-y-auto">
+        <div className="p-4 sm:p-6 border-b sticky top-0 bg-white z-10">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800">
             {isNew ? 'Nova Pergunta' : 'Editar Pergunta'}
           </h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
           {/* Question Text */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -101,7 +101,7 @@ export default function QuestionEditor({ question, onSave, onCancel, onDelete })
               value={form.text}
               onChange={handleTextChange}
               rows={3}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-gray-900 ${
+              className={`w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent transition text-gray-900 ${
                 errors.text ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="Digite a pergunta..."
@@ -115,24 +115,26 @@ export default function QuestionEditor({ question, onSave, onCancel, onDelete })
               Opções
             </label>
             {form.options.map((option) => (
-              <div key={option.key} className="flex items-center gap-3">
-                <span className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-                  form.correct === option.key
-                    ? 'bg-green-500 text-white'
-                    : 'bg-gray-200 text-gray-600'
-                }`}>
-                  {option.key}
-                </span>
-                <input
-                  type="text"
-                  value={option.text}
-                  onChange={(e) => handleOptionChange(option.key, e.target.value)}
-                  className={`flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-gray-900 ${
-                    errors[`option_${option.key}`] ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                  placeholder={`Opção ${option.key}`}
-                />
-                <label className="flex items-center gap-1 text-sm text-gray-600 cursor-pointer">
+              <div key={option.key} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                <div className="flex items-center gap-2 flex-1">
+                  <span className={`w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center font-bold text-sm ${
+                    form.correct === option.key
+                      ? 'bg-green-500 text-white'
+                      : 'bg-gray-200 text-gray-600'
+                  }`}>
+                    {option.key}
+                  </span>
+                  <input
+                    type="text"
+                    value={option.text}
+                    onChange={(e) => handleOptionChange(option.key, e.target.value)}
+                    className={`flex-1 px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent transition text-gray-900 ${
+                      errors[`option_${option.key}`] ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder={`Opção ${option.key}`}
+                  />
+                </div>
+                <label className="flex items-center gap-1 text-sm text-gray-600 cursor-pointer ml-10 sm:ml-0">
                   <input
                     type="radio"
                     name="correct"
@@ -152,26 +154,26 @@ export default function QuestionEditor({ question, onSave, onCancel, onDelete })
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Tempo Limite (segundos)
             </label>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
               <input
                 type="number"
                 value={form.timeLimit}
                 onChange={handleTimeLimitChange}
                 min={5}
                 max={120}
-                className={`w-24 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-gray-900 ${
+                className={`w-20 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent transition text-gray-900 ${
                   errors.timeLimit ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {[15, 30, 45, 60].map((t) => (
                   <button
                     key={t}
                     type="button"
                     onClick={() => setForm({ ...form, timeLimit: t })}
-                    className={`px-3 py-1 rounded text-sm ${
+                    className={`px-3 py-1.5 sm:py-1 rounded text-sm ${
                       form.timeLimit === t
-                        ? 'bg-blue-500 text-white'
+                        ? 'bg-[#5a6e3a] text-white'
                         : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
                     }`}
                   >
@@ -188,7 +190,7 @@ export default function QuestionEditor({ question, onSave, onCancel, onDelete })
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Pontos
             </label>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
               <input
                 type="number"
                 value={form.points || 100}
@@ -196,17 +198,17 @@ export default function QuestionEditor({ question, onSave, onCancel, onDelete })
                 min={10}
                 max={1000}
                 step={10}
-                className={`w-24 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-gray-900 ${
+                className={`w-20 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent transition text-gray-900 ${
                   errors.points ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {[50, 100, 150, 200].map((p) => (
                   <button
                     key={p}
                     type="button"
                     onClick={() => setForm({ ...form, points: p })}
-                    className={`px-3 py-1 rounded text-sm ${
+                    className={`px-3 py-1.5 sm:py-1 rounded text-sm ${
                       (form.points || 100) === p
                         ? 'bg-purple-500 text-white'
                         : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
@@ -225,7 +227,7 @@ export default function QuestionEditor({ question, onSave, onCancel, onDelete })
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Bonus de Velocidade (%)
             </label>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
               <input
                 type="number"
                 value={form.speedBonus ?? ''}
@@ -234,13 +236,13 @@ export default function QuestionEditor({ question, onSave, onCancel, onDelete })
                 max={100}
                 step={5}
                 placeholder="Padrão"
-                className="w-24 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-gray-900"
+                className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5a6e3a] focus:border-transparent transition text-gray-900"
               />
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
                   onClick={() => setForm({ ...form, speedBonus: null })}
-                  className={`px-3 py-1 rounded text-sm ${
+                  className={`px-3 py-1.5 sm:py-1 rounded text-sm ${
                     form.speedBonus === null
                       ? 'bg-orange-500 text-white'
                       : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
@@ -253,7 +255,7 @@ export default function QuestionEditor({ question, onSave, onCancel, onDelete })
                     key={b}
                     type="button"
                     onClick={() => setForm({ ...form, speedBonus: b })}
-                    className={`px-3 py-1 rounded text-sm ${
+                    className={`px-3 py-1.5 sm:py-1 rounded text-sm ${
                       form.speedBonus === b
                         ? 'bg-orange-500 text-white'
                         : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
@@ -270,29 +272,29 @@ export default function QuestionEditor({ question, onSave, onCancel, onDelete })
           </div>
 
           {/* Actions */}
-          <div className="flex justify-between pt-4 border-t">
-            <div>
+          <div className="flex flex-col sm:flex-row justify-between gap-3 pt-4 border-t">
+            <div className="order-2 sm:order-1">
               {!isNew && onDelete && (
                 <button
                   type="button"
                   onClick={() => onDelete(form.id)}
-                  className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                  className="w-full sm:w-auto px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition"
                 >
                   Excluir
                 </button>
               )}
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 order-1 sm:order-2">
               <button
                 type="button"
                 onClick={onCancel}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+                className="w-full sm:w-auto px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                className="w-full sm:w-auto px-6 py-2 bg-[#5a6e3a] text-white rounded-lg hover:bg-[#4a5a2a] transition"
               >
                 Salvar
               </button>
