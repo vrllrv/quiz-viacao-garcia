@@ -195,17 +195,17 @@ export default function Quiz() {
       <div className="max-w-2xl w-full mx-auto flex-1 flex flex-col">
         {/* Result Feedback - Shows at TOP after answering */}
         {showResult && (
-          <div className={`text-center p-4 sm:p-6 rounded-xl mb-4 ${
+          <div className={`text-center p-3 sm:p-4 rounded-xl mb-3 sm:mb-4 ${
             lastAnswer?.isCorrect ? 'bg-green-900/50 border-2 border-green-500' : 'bg-red-900/50 border-2 border-red-500'
           }`}>
             {lastAnswer?.isCorrect ? (
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
-                <p className="text-2xl sm:text-3xl font-bold text-green-400">Correto!</p>
-                <p className="text-xl sm:text-2xl text-green-300">+{lastAnswer.pointsEarned} pts</p>
+              <div className="flex items-center justify-center gap-3 sm:gap-4">
+                <p className="text-xl sm:text-2xl font-bold text-green-400">Correto!</p>
+                <p className="text-lg sm:text-xl text-green-300">+{lastAnswer.pointsEarned} pts</p>
               </div>
             ) : (
-              <div>
-                <p className="text-2xl sm:text-3xl font-bold text-red-400 mb-1">
+              <div className="flex items-center justify-center gap-2 flex-wrap">
+                <p className="text-xl sm:text-2xl font-bold text-red-400">
                   {lastAnswer?.selectedOption === 'TIMEOUT' ? 'Tempo esgotado!' : 'Incorreto!'}
                 </p>
                 {(quiz?.showCorrectAnswer ?? true) && (
@@ -218,8 +218,8 @@ export default function Quiz() {
           </div>
         )}
 
-        <div className="bg-gray-800 rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6">
-          <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-white">
+        <div className="bg-gray-800 rounded-xl sm:rounded-2xl p-3 sm:p-5 mb-3 sm:mb-4">
+          <h2 className="text-base sm:text-lg md:text-xl font-semibold text-white leading-snug">
             {currentQuestion.text}
           </h2>
         </div>

@@ -30,9 +30,9 @@ export default function AnswerButton({ option, selected, correct, showResult, sh
     <button
       onClick={() => onClick(option.key)}
       disabled={disabled || showResult}
-      className={`w-full p-4 rounded-xl border-2 text-left transition-all duration-200 ${getButtonStyle()} disabled:cursor-not-allowed`}
+      className={`w-full p-3 sm:p-4 rounded-xl border-2 text-left transition-all duration-200 text-sm sm:text-base ${getButtonStyle()} disabled:cursor-not-allowed`}
     >
-      <span className="font-bold mr-3">{option.key})</span>
+      <span className="font-bold mr-2 sm:mr-3">{option.key})</span>
       <span>{option.text}</span>
     </button>
   )
