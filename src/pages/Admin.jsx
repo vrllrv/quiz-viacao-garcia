@@ -7,6 +7,8 @@ import QuizManager from '../components/QuizManager'
 const ITEMS_PER_PAGE = 50
 const ADMIN_PASSWORD = 'garcia2024'
 const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1u2S_Pw-PpIj5sGcoRkdlHNYcMzN6Lxm1iR20mI8LWoM/edit'
+// Active users = participants who started in the last 10 minutes and haven't completed
+const ACTIVE_THRESHOLD_MINUTES = 10
 
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -31,6 +33,7 @@ export default function Admin() {
   const [departments, setDepartments] = useState([])
   const [quizNames, setQuizNames] = useState([])
   const [stats, setStats] = useState({ total: 0, completed: 0, avgScore: 0 })
+  const [activeUsers, setActiveUsers] = useState(0)
 
   const refreshQuizData = () => {
     const quiz = getActiveQuiz()
@@ -52,6 +55,56 @@ export default function Admin() {
       fetchStats()
       fetchDepartments()
       fetchQuizNames()
+      fetchActiveUsers()
+    }
+  }, [isAuthenticated])
+
+  // Fetch active users (in progress within last X minutes)
+  const fetchActiveUsers = async () => {
+    if (!supabase) {
+      setActiveUsers(0)
+      return
+    }
+
+    try {
+      const cutoffTime = new Date(Date.now() - ACTIVE_THRESHOLD_MINUTES * 60 * 1000).toISOString()
+
+      const { count } = await supabase
+        .from('participants')
+        .select('*', { count: 'exact', head: true })
+        .eq('completed', false)
+        .gte('created_at', cutoffTime)
+
+      setActiveUsers(count || 0)
+    } catch (err) {
+      console.error('Error fetching active users:', err)
+    }
+  }
+
+  // Real-time subscription for active users
+  useEffect(() => {
+    if (!supabase || !isAuthenticated) return
+
+    const channel = supabase
+      .channel('admin-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'participants' },
+        () => {
+          // Refresh stats and active users on any participant change
+          fetchStats()
+          fetchActiveUsers()
+          fetchParticipants()
+        }
+      )
+      .subscribe()
+
+    // Also poll every 30 seconds for active users (in case of stale connections)
+    const interval = setInterval(fetchActiveUsers, 30000)
+
+    return () => {
+      supabase.removeChannel(channel)
+      clearInterval(interval)
     }
   }, [isAuthenticated])
 
@@ -434,7 +487,7 @@ export default function Admin() {
         {activeTab === 'participants' && (
           <>
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 md:mb-6">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 md:mb-6">
               <div className="bg-white p-3 sm:p-4 md:p-6 rounded-xl shadow">
                 <p className="text-xl sm:text-2xl md:text-3xl font-bold text-[#5a6e3a]">{stats.total}</p>
                 <p className="text-xs sm:text-sm md:text-base text-gray-600">Total</p>
@@ -442,6 +495,15 @@ export default function Admin() {
               <div className="bg-white p-3 sm:p-4 md:p-6 rounded-xl shadow">
                 <p className="text-xl sm:text-2xl md:text-3xl font-bold text-green-600">{stats.completed}</p>
                 <p className="text-xs sm:text-sm md:text-base text-gray-600">Finalizados</p>
+              </div>
+              <div className="bg-white p-3 sm:p-4 md:p-6 rounded-xl shadow relative">
+                <div className="flex items-center gap-2">
+                  <p className="text-xl sm:text-2xl md:text-3xl font-bold text-orange-500">{activeUsers}</p>
+                  {activeUsers > 0 && (
+                    <span className="w-2 h-2 sm:w-3 sm:h-3 bg-orange-500 rounded-full animate-pulse"></span>
+                  )}
+                </div>
+                <p className="text-xs sm:text-sm md:text-base text-gray-600">Ao vivo</p>
               </div>
               <div className="bg-white p-3 sm:p-4 md:p-6 rounded-xl shadow">
                 <p className="text-xl sm:text-2xl md:text-3xl font-bold text-purple-600">{stats.avgScore}</p>
