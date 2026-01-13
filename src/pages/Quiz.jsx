@@ -175,32 +175,57 @@ export default function Quiz() {
   const lastAnswer = answers[answers.length - 1]
 
   return (
-    <div className="min-h-screen min-h-dvh bg-gradient-to-br from-gray-900 to-gray-800 flex flex-col p-4">
-      {/* Header */}
-      <div className="max-w-2xl w-full mx-auto mb-6">
-        {/* Logo */}
-        <div className="flex justify-center mb-4">
-          <div className="bg-[#333] rounded-lg px-4 py-2">
-            <img src="/logo_garcia.svg" alt="Viação Garcia" className="h-6" />
+    <div className="min-h-screen min-h-dvh bg-gradient-to-br from-gray-900 to-gray-800 flex flex-col p-3 sm:p-4">
+      {/* Header - Compact on mobile */}
+      <div className="max-w-2xl w-full mx-auto mb-3 sm:mb-6">
+        {/* Logo + Progress row */}
+        <div className="flex items-center justify-between mb-2 sm:mb-4">
+          <div className="bg-[#333] rounded-lg px-3 py-1.5 sm:px-4 sm:py-2">
+            <img src="/logo_garcia.svg" alt="Viação Garcia" className="h-5 sm:h-6" />
           </div>
-        </div>
-        <div className="flex justify-between items-center text-gray-400 mb-4">
-          <span>Pergunta {currentIndex + 1} de {questions.length}</span>
-          <span className="font-bold text-[#5a6e3a]">{totalScore} pts</span>
+          <div className="flex items-center gap-3 sm:gap-4 text-sm sm:text-base">
+            <span className="text-gray-400">{currentIndex + 1}/{questions.length}</span>
+            <span className="font-bold text-[#5a6e3a]">{totalScore} pts</span>
+          </div>
         </div>
         <Timer timeLeft={timeLeft} totalTime={timeLimit} />
       </div>
 
       {/* Question */}
       <div className="max-w-2xl w-full mx-auto flex-1 flex flex-col">
-        <div className="bg-gray-800 rounded-2xl p-6 mb-6">
-          <h2 className="text-xl md:text-2xl font-semibold text-white">
+        {/* Result Feedback - Shows at TOP after answering */}
+        {showResult && (
+          <div className={`text-center p-4 sm:p-6 rounded-xl mb-4 ${
+            lastAnswer?.isCorrect ? 'bg-green-900/50 border-2 border-green-500' : 'bg-red-900/50 border-2 border-red-500'
+          }`}>
+            {lastAnswer?.isCorrect ? (
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+                <p className="text-2xl sm:text-3xl font-bold text-green-400">Correto!</p>
+                <p className="text-xl sm:text-2xl text-green-300">+{lastAnswer.pointsEarned} pts</p>
+              </div>
+            ) : (
+              <div>
+                <p className="text-2xl sm:text-3xl font-bold text-red-400 mb-1">
+                  {lastAnswer?.selectedOption === 'TIMEOUT' ? 'Tempo esgotado!' : 'Incorreto!'}
+                </p>
+                {(quiz?.showCorrectAnswer ?? true) && (
+                  <p className="text-gray-300 text-sm sm:text-base">
+                    Resposta: <span className="font-bold text-white">{currentQuestion.correct}</span>
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="bg-gray-800 rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-white">
             {currentQuestion.text}
           </h2>
         </div>
 
         {/* Options */}
-        <div className="space-y-3 mb-6">
+        <div className="space-y-2 sm:space-y-3">
           {currentQuestion.options.map((option) => (
             <AnswerButton
               key={option.key}
@@ -214,32 +239,6 @@ export default function Quiz() {
             />
           ))}
         </div>
-
-        {/* Result Feedback */}
-        {showResult && (
-          <div className={`text-center p-6 rounded-xl ${
-            lastAnswer?.isCorrect ? 'bg-green-900/50' : 'bg-red-900/50'
-          }`}>
-            {lastAnswer?.isCorrect ? (
-              <>
-                <p className="text-3xl font-bold text-green-400 mb-2">Correto!</p>
-                <p className="text-xl text-green-300">+{lastAnswer.pointsEarned} pontos</p>
-              </>
-            ) : (
-              <>
-                <p className="text-3xl font-bold text-red-400 mb-2">
-                  {lastAnswer?.selectedOption === 'TIMEOUT' ? 'Tempo esgotado!' : 'Incorreto!'}
-                </p>
-                {(quiz?.showCorrectAnswer ?? true) && (
-                  <p className="text-gray-300">
-                    Resposta correta: <span className="font-bold">{currentQuestion.correct}</span>
-                  </p>
-                )}
-              </>
-            )}
-            <p className="text-gray-400 mt-4 text-sm">Próxima pergunta em instantes...</p>
-          </div>
-        )}
       </div>
     </div>
   )
