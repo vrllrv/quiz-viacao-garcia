@@ -335,39 +335,37 @@ export default function Admin() {
     <div className="min-h-screen min-h-dvh bg-gray-100 p-2 sm:p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col gap-4 mb-6 md:mb-8">
-          <div className="flex justify-between items-start">
-            <div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">Admin - Quiz</h1>
-              <p className="text-sm sm:text-base text-gray-600">Gerenciamento do quiz</p>
-            </div>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 md:mb-8">
+          <div>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">Admin - Quiz</h1>
+            <p className="text-sm sm:text-base text-gray-600">Gerenciamento do quiz</p>
+          </div>
+          {/* Action buttons */}
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={openGoogleSheet}
+              className="bg-[#5a6e3a] text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:bg-[#4a5a2a] transition flex items-center gap-2 text-sm sm:text-base"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+              <span className="hidden sm:inline">Planilha</span>
+            </button>
+            <button
+              onClick={clearParticipants}
+              disabled={resetting || stats.total === 0}
+              className="bg-red-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:bg-red-700 transition disabled:opacity-50 flex items-center gap-2 text-sm sm:text-base"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              <span className="hidden sm:inline">{resetting ? 'Limpando...' : 'Limpar'}</span>
+            </button>
             <button
               onClick={handleLogout}
               className="bg-gray-500 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-600 transition text-sm sm:text-base"
             >
               Sair
-            </button>
-          </div>
-          {/* Action buttons - responsive grid */}
-          <div className="grid grid-cols-2 sm:flex gap-2 sm:gap-3">
-            <button
-              onClick={openGoogleSheet}
-              className="bg-[#5a6e3a] text-white px-3 py-2 sm:px-4 rounded-lg hover:bg-[#4a5a2a] transition flex items-center justify-center gap-2 text-sm sm:text-base"
-            >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-              <span className="hidden xs:inline">Abrir</span> Planilha
-            </button>
-            <button
-              onClick={clearParticipants}
-              disabled={resetting || stats.total === 0}
-              className="bg-red-600 text-white px-3 py-2 sm:px-4 rounded-lg hover:bg-red-700 transition disabled:opacity-50 flex items-center justify-center gap-2 text-sm sm:text-base"
-            >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-              {resetting ? 'Limpando...' : <><span className="hidden sm:inline">Limpar</span> <span className="sm:hidden">Limpar</span></>}
             </button>
           </div>
         </div>
